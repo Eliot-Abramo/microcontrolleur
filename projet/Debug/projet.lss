@@ -1,18 +1,18 @@
 
-AVRASM ver. 2.2.6  C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm Tue Apr 23 18:46:42 2024
+AVRASM ver. 2.2.6  C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm Tue Apr 23 19:06:12 2024
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm(13): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\definitions.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm(14): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\macros.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm(245): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\lcd.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm(246): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\printf.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm(247): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\eeprom.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(13): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\definitions.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(14): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\macros.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(245): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(246): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(247): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\eeprom.asm'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm(13): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\definitions.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm(14): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\macros.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm(245): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\lcd.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm(246): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\printf.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\projet.asm(247): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet\eeprom.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(13): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\definitions.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(14): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\macros.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(245): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(246): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(247): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\eeprom.asm'
                                  
                                  /*
                                  
@@ -4422,7 +4422,7 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet
 0003a7 fc60
 0003a8 c003                      	JB1		r6,0,speaker_alarm
 0003a9 fe60
-0003aa c00d                      	JB0		r6,0,speaker_off
+0003aa c01f                      	JB0		r6,0,speaker_off
 0003ab 9508                      	ret
                                  
                                  speaker_alarm:
@@ -4432,46 +4432,64 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet
 0003af e001
 0003b0 2e50
 0003b1 ddba                      	PRINTF	LCD 
-                                 	;.db "System active  ",LF,0
-0003b2 e20e
-0003b3 2e40
-0003b4 e001
-0003b5 2e50
-0003b6 ddb5                      	PRINTF	LCD
-                                 	;.db "Sound : ON     ",LF,0
+0003b2 7953
+0003b3 7473
+0003b4 6d65
+0003b5 6120
+0003b6 7463
+0003b7 7669
+0003b8 2065
+0003b9 0a20
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(333): warning: .cseg .db misalignment - padding zero byte
+0003ba 0000                      	.db "System active  ",LF,0
+0003bb e20e
+0003bc 2e40
+0003bd e001
+0003be 2e50
+0003bf ddac                      	PRINTF	LCD
+0003c0 6f53
+0003c1 6e75
+0003c2 2064
+0003c3 203a
+0003c4 4e4f
+0003c5 2020
+0003c6 2020
+0003c7 0a20
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(335): warning: .cseg .db misalignment - padding zero byte
+0003c8 0000                      	.db "Sound : ON     ",LF,0
                                  
-0003b7 cf54                          rjmp	different_sound
+0003c9 cf42                          rjmp	different_sound
                                  
                                  speaker_off:					;turn off the speaker
-0003b8 dd83                      	rcall	LCD_home
-0003b9 e20e
-0003ba 2e40
-0003bb e001
-0003bc 2e50
-0003bd ddae                      	PRINTF	LCD 
-0003be 7953
-0003bf 7473
-0003c0 6d65
-0003c1 6120
-0003c2 7463
-0003c3 7669
-0003c4 2065
-0003c5 2020
-0003c6 000a                      	.db "System active   ",LF,0
-0003c7 e20e
-0003c8 2e40
-0003c9 e001
-0003ca 2e50
-0003cb dda0                      	PRINTF	LCD
-0003cc 6f53
-0003cd 6e75
-0003ce 2064
-0003cf 203a
-0003d0 464f
-0003d1 2046
-0003d2 2020
-0003d3 2020
-0003d4 000a                      	.db "Sound : OFF     ",LF,0
+0003ca dd71                      	rcall	LCD_home
+0003cb e20e
+0003cc 2e40
+0003cd e001
+0003ce 2e50
+0003cf dd9c                      	PRINTF	LCD 
+0003d0 7953
+0003d1 7473
+0003d2 6d65
+0003d3 6120
+0003d4 7463
+0003d5 7669
+0003d6 2065
+0003d7 2020
+0003d8 000a                      	.db "System active   ",LF,0
+0003d9 e20e
+0003da 2e40
+0003db e001
+0003dc 2e50
+0003dd dd8e                      	PRINTF	LCD
+0003de 6f53
+0003df 6e75
+0003e0 2064
+0003e1 203a
+0003e2 464f
+0003e3 2046
+0003e4 2020
+0003e5 2020
+0003e6 000a                      	.db "Sound : OFF     ",LF,0
 
 
 RESOURCE USE INFORMATION
@@ -4522,8 +4540,8 @@ Instructions used: 63 out of 114 (55.3%)
 "ATmega128" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0007ac   1696    216   1912  131072   1.5%
+[.cseg] 0x000000 0x0007d0   1696    252   1948  131072   1.5%
 [.dseg] 0x000100 0x000100      0      0      0    4096   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    4096   0.0%
 
-Assembly complete, 0 errors, 0 warnings
+Assembly complete, 0 errors, 2 warnings
