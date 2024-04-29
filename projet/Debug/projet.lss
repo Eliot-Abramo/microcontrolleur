@@ -1,20 +1,22 @@
 
-AVRASM ver. 2.2.6  C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm Tue Apr 23 19:06:12 2024
+AVRASM ver. 2.2.6  C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm Mon Apr 29 17:57:25 2024
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(13): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\definitions.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(14): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\macros.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(245): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(246): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(247): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\eeprom.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(12): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\macros.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(13): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\definitions.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(22): warning: Register r2 already defined by the .DEF directive
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(23): warning: Register r1 already defined by the .DEF directive
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(24): warning: Register r14 already defined by the .DEF directive
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(25): warning: Register r15 already defined by the .DEF directive
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(137): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(138): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(13): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\definitions.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(14): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\macros.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(245): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(246): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm'
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(247): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\eeprom.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(12): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\macros.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(13): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\definitions.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(137): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm'
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(138): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm'
                                  
-                                 /*
+                                 ; file  kpd4x4_S.asm   target ATmega128L-4MHz-STK300    
                                  
                                  ;***** Created: 2011-02-09 12:03 ******* Source: ATmega128.xml ***********
                                  ;*************************************************************************
@@ -1233,25 +1235,17 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet
                                  
                                  ; ***** END OF FILE ******************************************************
                                  
-                                     EPFL - EE-208: Microcontrôleurs et Systèmes Numériques
-                                     Semester Project - Spring Semester 2023
+                                 ; purpose keypad 4x4 acquisition and print
+                                 ;  uses four external interrupts and ports internal pull-up
                                  
-                                     Groupe 022:
-                                     Alexandre Moy - SCIPER 345712
-                                     Loriane Schafer - SCIPER 346561
+                                 ; solutions based on the methodology presented in EE208-MICRO210_ESP-2024-v1.0.fm
+                                 ;>alternate solutions also possible
+                                 ; standalone solution/file; not meeant as a modular solution and thus must be
+                                 ;>adapted when used in a complex project
+                                 ; solution based on interrupts detected on each row; not optimal but functional if
+                                 ;>and external four-input gate is not available
                                  
-                                     Project description:
-                                     Security IR system with passcode
-                                 */
-                                 
-                                 .include "definitions.asm"
-                                 
-                                 ; purpose library, definition of addresses and constants
-                                 ; 20171114 A.S.
-                                 
-                                 ; === definitions  ===
-                                 .list
-                                 .include "macros.asm"
+                                 .include "macros.asm"    ; include macro definitions
                                  
                                  ; purpose library, general-purpose macros
                                  ; author (c) R.Holzer (adapted MICRO210/EE208 A.Schmid)
@@ -3091,363 +3085,336 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet
                                  	rjmp	@0
                                  	.endmacro
                                  .list
+                                 .include "definitions.asm"  ; include register/constant definitions
                                  
-                                 .macro SET_BIT_1;reg,bit		;Change selected bit to 1
-                                 	push a0
-                                 	mov a0,@0
-                                 	FB1 a0,@1		
-                                 	mov @0,a0
-                                 	pop a0
-                                 	.endmacro
+                                 ; purpose library, definition of addresses and constants
+                                 ; 20171114 A.S.
                                  
-                                 .macro SET_BIT_0;reg,bit		;Change selected bit to 0
-                                 	push a0
-                                 	mov a0,@0
-                                 	FB0 a0,@1
-                                 	mov @0,a0
-                                 	pop a0
-                                 	.endmacro
+                                 ; === definitions  ===
+                                 .list
                                  
-                                 .macro PULSE_TEST				;Impulse test to debug IR command
-                                 	push a0
-                                 	ldi a0, 0xff
-                                 	WAIT_US @0
-                                 	ldi a0, 0x00
-                                 	WAIT_US @0
-                                 	pop a0
-                                 	WAIT_US 30000
-                                 	.endmacro
+                                   ; === definitions ===
+                                 .equ  KPDD = DDRD
+                                 .equ  KPDO = PORTD
+                                 .equ  KPDI = PIND
                                  
-                                 ;=== Interrupt table ===
+                                 .equ  KPD_DELAY = 30  ; msec, debouncing keys of keypad
+                                 
+                                 .def  wr0 = r2    ; detected row in hex
+                                 .def  wr1 = r1    ; detected column in hex
+                                 .def  mask = r14    ; row mask indicating which row has been detected in bin
+                                 .def  wr2 = r15    ; semaphore: must enter LCD display routine, unary: 0 or other
+                                 
+                                   ; === interrupt vector table ===
                                  .org 0
-000000 940c 010b                 	jmp reset
-                                 .org INT0addr					;interrup INT0
-000002 940c 0022                     jmp ext_int0
-                                 .org INT7addr					;interrup INT7
-000010 940c 002b                 	jmp ext_int7
-                                 .org OVF0addr
-000020 940c 005d                 	jmp overflow_0
+000000 940c 0400                   jmp reset
+000002 940c 000a                   jmp  isr_ext_int0  ; external interrupt INT0
+000004 940c 0014                   jmp  isr_ext_int1  ; external interrupt INT1
+000006 940c 001e                   jmp isr_ext_int2
+000008 940c 0028                   jmp isr_ext_int3
                                  
-                                 ;=== Interrupt service routines ===
-                                 ext_int0:						;subroutine for IR sensor
-000022 fe61
-000023 c006                      	JB0		r6,1,exit_inter
-000024 932f
-000025 2d26
-000026 6021
-000027 2e62
-000028 912f                      	SET_BIT_1 r6,0	
-000029 9518                      	reti
+                                 ; (TO BE COMPLETED AT THIS LOCATION)  DONE
                                  
-                                 exit_inter:						;exit interruption
-00002a 9518                      	reti
+                                   ; === interrupt service routines ===
+                                 isr_ext_int0:
+00000a 9bc0
+00000b c002
+00000c 98c0
+00000d c001
+00000e 9ac0                        INVP  PORTB,0      ;;debug
+00000f e000
+000010 2e20                        _LDI  wr0, 0x00    ; detect row 1
+000011 e001
+000012 2ee0                        _LDI  mask, 0b00000001
+000013 c01e                        rjmp  column_detect
+                                   ; no reti (grouped in isr_return)
                                  
-                                 ext_int7:						;subroutine for IR command
-                                 read_IR_input:
-00002b 1b77
-00002c 2766                      	CLR2		b1,b0			; clear 2-byte register
-00002d e08e                      	ldi			b2,14			; load bit-counter
-00002e 990f
-00002f cffe                      	WP1			PINE,IR			; Wait if Pin=1 	
-000030 e40f
-000031 2e30
-000032 e003
-000033 943a
-000034 f7f1
-000035 943a
-000036 950a
-000037 f7d9                      	WAIT_US		(T1/4)			; wait a quarter period
-                                 	
-000038 990f
-000039 9408
-00003a 9b0f
-00003b 9488                      loop_ir:	P2C		PINE,IR		; move Pin to Carry (P2C)
-00003c 1f66
-00003d 1f77                      	ROL2		b1,b0			; roll carry into 2-byte reg
-00003e e30c
-00003f 2e30
-000040 e00a
-000041 943a
-000042 f7f1
+                                 isr_ext_int1:
+000014 9bc1
+000015 c002
+000016 98c1
+000017 c001
+000018 9ac1                        INVP  PORTB,1
+000019 e001
+00001a 2e20                        _LDI  wr0, 0x01    ; detect row 2
+00001b e002
+00001c 2ee0                        _LDI  mask, 0b00000010
+00001d c014                        rjmp  column_detect
+                                   ; no reti (grouped in isr_return)
+                                 
+                                 isr_ext_int2:
+00001e 9bc2
+00001f c002
+000020 98c2
+000021 c001
+000022 9ac2                        INVP  PORTB,0x02
+000023 e002
+000024 2e20                        _LDI  wr0, 0x02    ; detect row 3
+000025 e004
+000026 2ee0                        _LDI  mask, 0b00000100
+000027 c00a                        rjmp  column_detect
+                                   ; no reti (grouped in isr_return)
+                                 
+                                 isr_ext_int3:
+000028 9bc3
+000029 c002
+00002a 98c3
+00002b c001
+00002c 9ac3                        INVP  PORTB,3
+00002d e003
+00002e 2e20                        _LDI  wr0, 0x03    ; detect row 4
+00002f e008
+000030 2ee0                        _LDI  mask, 0b00001000
+000031 c000                        rjmp  column_detect
+                                   ; no reti (grouped in isr_return)
+                                 
+                                 ; TO BE COMPLETED AT THIS LOCATION
+                                 
+                                 column_detect:
+                                 
+000032 ef0f
+000033 bb02                        OUTI  KPDO,0xff  ; bit4-7 driven high
+                                 col7:
+000034 e10e
+000035 2e30
+000036 e001
+000037 930f
+000038 923f
+000039 e300
+00003a 2e30
+00003b e006
+00003c 943a
+00003d f7f1
+00003e 943a
+00003f 950a
+000040 f7d9
+000041 903f
+000042 910f
 000043 943a
-000044 950a
-000045 f7d9                      	WAIT_US		(T1-4)			; wait bit period (- compensation)	
-000046 958a
-000047 f781                      	DJNZ		b2,loop_ir		; Decrement and Jump if Not Zero
-000048 9560                      	com		b0					; complement b0
+000044 f791
+000045 950a
+000046 f781                        WAIT_MS  KPD_DELAY
+000047 e70f
+000048 bb02                        OUTI  KPDO,0x7f  ; check column 7
+000049 e10e
+00004a 2e30
+00004b e001
+00004c 930f
+00004d 923f
+00004e e300
+00004f 2e30
+000050 e006
+000051 943a
+000052 f7f1
+000053 943a
+000054 950a
+000055 f7d9
+000056 903f
+000057 910f
+000058 943a
+000059 f791
+00005a 950a
+00005b f781                        WAIT_MS  KPD_DELAY
+00005c b300                        in    w,KPDI
+00005d 210e                        and    w,mask
+00005e 2300                        tst    w
+00005f f441                        brne  col6
+000060 e003
+000061 2e10                        _LDI  wr1,0x03
+000062 9bc7
+000063 c002
+000064 98c7
+000065 c001
+000066 9ac7                        INVP  PORTB,7    ;;debug
+000067 c09d                        rjmp  isr_return
+                                   
+                                 col6:
+000068 e10e
+000069 2e30
+00006a e001
+00006b 930f
+00006c 923f
+00006d e300
+00006e 2e30
+00006f e006
+000070 943a
+000071 f7f1
+000072 943a
+000073 950a
+000074 f7d9
+000075 903f
+000076 910f
+000077 943a
+000078 f791
+000079 950a
+00007a f781                        WAIT_MS  KPD_DELAY
+00007b eb0f
+00007c bb02                        OUTI  KPDO,0xbf  ; check column 6
+00007d e10e
+00007e 2e30
+00007f e001
+000080 930f
+000081 923f
+000082 e300
+000083 2e30
+000084 e006
+000085 943a
+000086 f7f1
+000087 943a
+000088 950a
+000089 f7d9
+00008a 903f
+00008b 910f
+00008c 943a
+00008d f791
+00008e 950a
+00008f f781                        WAIT_MS  KPD_DELAY
+000090 b300                        in    w,KPDI
+000091 210e                        and    w,mask
+000092 2300                        tst    w
+000093 f441                        brne  col5
+000094 e002
+000095 2e10                        _LDI  wr1,0x02
+000096 9bc6
+000097 c002
+000098 98c6
+000099 c001
+00009a 9ac6                        INVP  PORTB,6    ;;debug
+00009b c069                        rjmp  isr_return
                                  
-000049 f41e                      	brtc	PC+4				;branch if T=0
-00004a fd73                      	sbrc	b1,3				;skip if T=1 and toggle=0
-00004b 9518                      	reti						;out of interrupt if T=1 and toggle=1
-00004c c002                      	rjmp	PC+3				;continue program if T=1 and toggle=0
-00004d ff73                      	sbrs	b1,3				;continue program if T=0 and toggle=1
-00004e 9518                      	reti						;out of interrupt if T=0 and toggle=0
+                                 col5:
+00009c e10e
+00009d 2e30
+00009e e001
+00009f 930f
+0000a0 923f
+0000a1 e300
+0000a2 2e30
+0000a3 e006
+0000a4 943a
+0000a5 f7f1
+0000a6 943a
+0000a7 950a
+0000a8 f7d9
+0000a9 903f
+0000aa 910f
+0000ab 943a
+0000ac f791
+0000ad 950a
+0000ae f781                        WAIT_MS  KPD_DELAY
+0000af ed0f
+0000b0 bb02                        OUTI  KPDO,0xdf  ; check column 5
+0000b1 e10e
+0000b2 2e30
+0000b3 e001
+0000b4 930f
+0000b5 923f
+0000b6 e300
+0000b7 2e30
+0000b8 e006
+0000b9 943a
+0000ba f7f1
+0000bb 943a
+0000bc 950a
+0000bd f7d9
+0000be 903f
+0000bf 910f
+0000c0 943a
+0000c1 f791
+0000c2 950a
+0000c3 f781                        WAIT_MS  KPD_DELAY
+0000c4 b300                        in    w,KPDI
+0000c5 210e                        and    w,mask
+0000c6 2300                        tst    w
+0000c7 f441                        brne  col4
+0000c8 e001
+0000c9 2e10                        _LDI  wr1,0x01
+0000ca 9bc5
+0000cb c002
+0000cc 98c5
+0000cd c001
+0000ce 9ac5                        INVP  PORTB,5    ;;debug
+0000cf c035                        rjmp  isr_return
                                  
-00004f fb73                      	bst		b1,3				;store toggle bit in T 
-                                 
-                                 	;PULSE_TEST 10000
-                                 
-000050 fc67
-000051 c061                      	JB1		r6,7,change_code	;branch to the change passcode routine if bit 7 of r6 is 1
-                                 
-000052 fc61
-000053 c002                      	JB1		r6,1,PC+3			;check if the AV button is pressed when the system is inactive
-000054 3c67                      	cpi		b0,0xc7
-000055 f119                      	breq	change_code_activation
-                                 
-000056 fc62
-000057 c027                      	JB1		r6,2,check_code		;skip actions buttons for passcode validation
-                                 
-000058 3e6f                      	cpi		b0,0xef				;check if "system on" button pressed
-000059 f099                      	breq	activate_system
-                                 
-00005a 3f63                      	cpi		b0,0xf3				;check if "code unlock" button pressed
-00005b f0b9                      	breq	code_unlock
-                                 
-00005c 9518                      	reti
-                                 overflow_0:
-00005d fe60
-00005e cfcb                      	JB0		r6,0,exit_inter
-00005f 9470                          com		r7		;make sound if system is active and a motion is detected
-                                 
-000060 9518                      	reti
-                                 ;=== Buttons actions ===
-                                 put_alarm_off:
-000061 932f
-000062 2d26
-000063 7f2e
-000064 2e62
-000065 912f                      	SET_BIT_0	r6,0			;set the alarm bit to 0
-000066 9518                      	reti
-                                 desactivate_system:
-000067 932f
-000068 2d26
-000069 7f2d
-00006a 2e62
-00006b 912f                      	SET_BIT_0	r6,1			;set the system bit to 0
-00006c 9518                      	reti
-                                 activate_system:
-00006d 932f
-00006e 2d26
-00006f 6022
-000070 2e62
-000071 912f                      	SET_BIT_1	r6,1			;set the system bit to 1
-000072 9518                      	reti
-                                 code_unlock:
-000073 932f
-000074 2d26
-000075 6024
-000076 2e62
-000077 912f                      	SET_BIT_1	r6,2			;set the code unlock bit to 1
-000078 9518                      	reti
-                                 change_code_activation:
-000079 932f
-00007a 2d26
-00007b 6820
-00007c 2e62
-00007d 912f                      	SET_BIT_1	r6,7			;set the change passcode bit to 1
-00007e 9518                      	reti
-                                 
-                                 ;=== Passcode verification ===
-                                 check_code:
-00007f fe66
-000080 c005                      	JB0		r6,6,code1_check	;jump to subroutine for first digit test
-000081 fe65
-000082 c010                      	JB0		r6,5,code2_check	;jump to subroutine for second digit test
-000083 fe64
-000084 c01b                      	JB0		r6,4,code3_check	;jump to subroutine for third digit test
-000085 9518                      	reti
-                                 code1_check:
-000086 932f
-000087 2d26
-000088 6420
-000089 2e62
-00008a 912f                      	SET_BIT_1	r6,6
-00008b 932f                      	push a0						;search in EEPROM the first passcode digit
-00008c e7ab                      	ldi xl, low(code1_adress)
-00008d e0b0                      	ldi xh, high(code1_adress)
-00008e d1fe                      	rcall eeprom_load
-00008f 1762                      	cp			b0, a0			;check good code 
-000090 912f                      	pop a0
-000091 f4d9                      	brne		wrong_code
-000092 9518                      	reti
-                                 code2_check:
-000093 932f
-000094 2d26
-000095 6220
-000096 2e62
-000097 912f                      	SET_BIT_1	r6,5
-000098 932f                      	push a0						;search in EEPROM the second passcode digit
-000099 e7ac                      	ldi xl, low(code2_adress)
-00009a e0b0                      	ldi xh, high(code2_adress)
-00009b d1f1                      	rcall eeprom_load
-00009c 1762                      	cp			b0, a0			;check good code 
-00009d 912f                      	pop a0
-00009e f471                      	brne		wrong_code
-00009f 9518                      	reti
-                                 code3_check:
-0000a0 932f
-0000a1 2d26
-0000a2 6120
-0000a3 2e62
-0000a4 912f                      	SET_BIT_1	r6,4
-0000a5 932f                      	push a0						;search in EEPROM the third passcode digit
-0000a6 e7ad                      	ldi xl, low(code3_adress)
-0000a7 e0b0                      	ldi xh, high(code3_adress)
-0000a8 d1e4                      	rcall eeprom_load
-0000a9 1762                      	cp			b0, a0			;check good code 
-0000aa 912f                      	pop a0
-0000ab f409                      	brne		wrong_code
-0000ac 9518                      	reti
-                                 wrong_code:
-0000ad 932f
-0000ae 2d26
-0000af 6028
-0000b0 2e62
-0000b1 912f                      	SET_BIT_1	r6,3			;set the wrong code bit to 1 if wrong passcode detected
-0000b2 9518                      	reti
-                                 
-                                 ;=== Change the passcode in the EEPROM ===
-                                 change_code:
-0000b3 fe66
-0000b4 c005                      	JB0			r6,6,code1_change;jump to the subroutine for store first digit in EEPROM
-0000b5 fe65
-0000b6 c011                      	JB0			r6,5,code2_change;jump to the subroutine for store second digit in EEPROM
-0000b7 fe64
-0000b8 c01d                      	JB0			r6,4,code3_change;jump to the subroutine for store third digit in EEPROM
-0000b9 9518                      	reti
-                                 code1_change:
-0000ba 932f
-0000bb 2d26
-0000bc 6420
-0000bd 2e62
-0000be 912f                      	SET_BIT_1	r6,6
-0000bf 94f8                      	cli
-0000c0 932f                      	push		a0				;store selected value in the selected adress in the EEPROM
-0000c1 2f26                      	mov			a0,b0
-0000c2 e7ab                      	ldi			xl, low(code1_adress)
-0000c3 e0b0                      	ldi			xh, high(code1_adress)
-0000c4 d1ba                      	rcall		eeprom_store
-0000c5 912f                      	pop			a0
-0000c6 9478                      	sei
-0000c7 9518                      	reti
-                                 code2_change:
-0000c8 932f
-0000c9 2d26
-0000ca 6220
-0000cb 2e62
-0000cc 912f                      	SET_BIT_1	r6,5
-0000cd 94f8                      	cli
-0000ce 932f                      	push		a0				;store selected value in the selected adress in the EEPROM
-0000cf 2f26                      	mov			a0,b0
-0000d0 e7ac                      	ldi			xl, low(code2_adress)
-0000d1 e0b0                      	ldi			xh, high(code2_adress)
-0000d2 d1ac                      	rcall		eeprom_store
-0000d3 912f                      	pop			a0
-0000d4 9478                      	sei
-0000d5 9518                      	reti
-                                 code3_change:
-0000d6 932f
-0000d7 2d26
-0000d8 6120
-0000d9 2e62
-0000da 912f                      	SET_BIT_1	r6,4
-0000db 94f8                      	cli
-0000dc 932f                      	push		a0				;store selected value in the selected adress in the EEPROM
-0000dd 2f26                      	mov			a0,b0
-0000de e7ad                      	ldi			xl, low(code3_adress)
-0000df e0b0                      	ldi			xh, high(code3_adress)
-0000e0 d19e                      	rcall		eeprom_store
-0000e1 912f                      	pop			a0
-0000e2 9478                      	sei
-                                 
-0000e3 ef04
-0000e4 2e30
-0000e5 e002
-0000e6 930f
-0000e7 923f
-0000e8 e300
-0000e9 2e30
-0000ea e006
-0000eb 943a
-0000ec f7f1
+                                 col4:
+0000d0 e10e
+0000d1 2e30
+0000d2 e001
+0000d3 930f
+0000d4 923f
+0000d5 e300
+0000d6 2e30
+0000d7 e006
+0000d8 943a
+0000d9 f7f1
+0000da 943a
+0000db 950a
+0000dc f7d9
+0000dd 903f
+0000de 910f
+0000df 943a
+0000e0 f791
+0000e1 950a
+0000e2 f781                        WAIT_MS  KPD_DELAY
+0000e3 ee0f
+0000e4 bb02                        OUTI  KPDO,0xef  ; check column 4
+0000e5 e10e
+0000e6 2e30
+0000e7 e001
+0000e8 930f
+0000e9 923f
+0000ea e300
+0000eb 2e30
+0000ec e006
 0000ed 943a
-0000ee 950a
-0000ef f7d9
-0000f0 903f
-0000f1 910f
-0000f2 943a
-0000f3 f791
-0000f4 950a
-0000f5 f781                      	WAIT_MS 500
+0000ee f7f1
+0000ef 943a
+0000f0 950a
+0000f1 f7d9
+0000f2 903f
+0000f3 910f
+0000f4 943a
+0000f5 f791
+0000f6 950a
+0000f7 f781                        WAIT_MS  KPD_DELAY
+0000f8 b300                        in    w,KPDI
+0000f9 210e                        and    w,mask
+0000fa 2300                        tst    w
+0000fb f441                        brne  err_row0
+0000fc e000
+0000fd 2e10                        _LDI  wr1,0x00
+0000fe 9bc4
+0000ff c002
+000100 98c4
+000101 c001
+000102 9ac4                        INVP  PORTB,4  ;;debug
+000103 c001                        rjmp  isr_return
                                  
-0000f6 932f
-0000f7 2d26
-0000f8 772f
-0000f9 2e62
-0000fa 912f                      	SET_BIT_0 r6,7				;reset all leds indicators when passcode changed
-0000fb 932f
-0000fc 2d26
-0000fd 7b2f
-0000fe 2e62
-0000ff 912f                      	SET_BIT_0 r6,6
-000100 932f
-000101 2d26
-000102 7d2f
-000103 2e62
-000104 912f                      	SET_BIT_0 r6,5
-000105 932f
-000106 2d26
-000107 7e2f
-000108 2e62
-000109 912f                      	SET_BIT_0 r6,4
                                  
-00010a 9518                      	reti
+                                 ; TO BE COMPLETED AT THIS LOCATION
+                                   
+                                   err_row0:      ; debug purpose and filter residual glitches    
+                                   ;INVP  PORTB,0
+000104 c000                        rjmp  isr_return
+                                   ; no reti (grouped in isr_return)
                                  
-                                 ;=== Set global constants ===
-                                 .equ T1 = 1778
-                                 .equ code1 = 0xfe				;first code digit
-                                 .equ code2 = 0xfd				;second code digit
-                                 .equ code3 = 0xfc				;third code digit
-                                 
-                                 .equ code1_adress = 123			;first EEPROM adress for passcode
-                                 .equ code2_adress = 124			;second EEPROM adress for passcode
-                                 .equ code3_adress = 125			;third EEPROM adress for passcode
-                                 
-                                 ;=== Reset ===
-                                 reset :
-00010b ef0f
-00010c bf0d
-00010d e100
-00010e bf0e                      	LDSP	RAMEND				;load stack pointer
-                                 
-00010f 9817                      	cbi		DDRE,IR				;set IR input
-                                     
-000110 9a12                          sbi		DDRE,SPEAKER		;set speaker output
-                                     
-000111 d03c                          rcall	LCD_init			;initialize LCD 
-000112 d027                      	rcall	LCD_clear
-000113 d028                      	rcall	LCD_home 
-                                 
-000114 e001
-000115 bf07                      	OUTI	TIMSK,1<<TOIE0	; Timer0 Overflow Interrupt Enable
-000116 e004
-000117 bf03                      	OUTI	TCCR0,4
-000118 e008
-000119 bf00                      	OUTI	ASSR,1<<AS0
-                                 
-00011a e801
-00011b bf09                          OUTI EIMSK, 0b10000001		;enable INT0
-00011c e003
-00011d 9300 006a                     OUTEI EICRA, 0b00000011		;3<<ISC00 ;
-00011f 9478                      	sei							;set global interrupt
-                                 
-000120 2466                      	clr r6						;clear working registers
-000121 2477                      	clr r7
-                                 
-000122 c171                          rjmp main
-                                 
-                                 .include "lcd.asm"				;include LCD routines
+                                 isr_return:
+000105 9bc0
+000106 c002
+000107 98c0
+000108 c001
+000109 9ac0                        INVP  PORTB,0    ; visual feedback of key pressed acknowledge
+00010a e01a                        ldi    _w,10    ; sound feedback of key pressed acknowledge
+                                 beep01:  
+                                   
+                                   ; TO BE COMPLETED AT THIS LOCATION
+00010b e00f
+00010c bb02                        OUTI KPDO, 0x0f
+00010d ef0f
+00010e 2ef0                        _LDI  wr2,0xff
+00010f 9518                        reti
+                                   
+                                 .include "lcd.asm"      ; include UART routines
                                  
                                  ; purpose  LCD HD44780U library
                                  ; ATmega 128 and Atmel Studio 7.0 compliant
@@ -3459,94 +3426,94 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet
                                  ; === subroutines ===
                                  LCD_wr_ir:
                                  ; in	w (byte to write to LCD IR)
-000123 9030 8000                 	lds	u, LCD_IR		; read IR to check busy flag  (bit7)
-000125 fc37
-000126 cffc                      	JB1	u,7,LCD_wr_ir	; Jump if Bit=1 (still busy)
-000127 d003                      	rcall	lcd_4us		; delay to increment DRAM addr counter
-000128 9300 8000                 	sts	LCD_IR, w		; store w in IR
-00012a 9508                      	ret
+000110 9030 8000                 	lds	u, LCD_IR		; read IR to check busy flag  (bit7)
+000112 fc37
+000113 cffc                      	JB1	u,7,LCD_wr_ir	; Jump if Bit=1 (still busy)
+000114 d003                      	rcall	lcd_4us		; delay to increment DRAM addr counter
+000115 9300 8000                 	sts	LCD_IR, w		; store w in IR
+000117 9508                      	ret
                                  	
                                  lcd_4us:
-00012b d000                      	rcall	lcd_2us		; recursive call		
+000118 d000                      	rcall	lcd_2us		; recursive call		
                                  lcd_2us:
-00012c 0000                      	nop					; rcall(3) + nop(1) + ret(4) = 8 cycles (2us)
-00012d 9508                      	ret
+000119 0000                      	nop					; rcall(3) + nop(1) + ret(4) = 8 cycles (2us)
+00011a 9508                      	ret
                                  
                                  LCD:
                                  LCD_putc:
-00012e 302d
-00012f f169                      	JK	a0,CR,LCD_cr	; Jump if a0=CR
-000130 302a
-000131 f1a9                      	JK	a0,LF,LCD_lf	; Jump if a0=LF
+00011b 302d
+00011c f169                      	JK	a0,CR,LCD_cr	; Jump if a0=CR
+00011d 302a
+00011e f1a9                      	JK	a0,LF,LCD_lf	; Jump if a0=LF
                                  LCD_wr_dr:
                                  ; in	a0 (byte to write to LCD DR)
-000132 9100 8000                 	lds	w, LCD_IR		; read IR to check busy flag  (bit7)
-000134 fd07
-000135 cffc                      	JB1	w,7,LCD_wr_dr	; Jump if Bit=1 (still busy)
-000136 dff4                      	rcall	lcd_4us		; delay to increment DRAM addr counter
-000137 9320 c000                 	sts	LCD_DR, a0		; store a0 in DR
-000139 9508                      	ret	
+00011f 9100 8000                 	lds	w, LCD_IR		; read IR to check busy flag  (bit7)
+000121 fd07
+000122 cffc                      	JB1	w,7,LCD_wr_dr	; Jump if Bit=1 (still busy)
+000123 dff4                      	rcall	lcd_4us		; delay to increment DRAM addr counter
+000124 9320 c000                 	sts	LCD_DR, a0		; store a0 in DR
+000126 9508                      	ret	
                                  	
-00013a e001
-00013b cfe7                      LCD_clear:		JW	LCD_wr_ir, 0b00000001		; clear display
-00013c e002
-00013d cfe5                      LCD_home:		JW	LCD_wr_ir, 0b00000010		; return home
-00013e e100
-00013f cfe3                      LCD_cursor_left:	JW	LCD_wr_ir, 0b00010000	; move cursor to left
-000140 e104
-000141 cfe1                      LCD_cursor_right:	JW	LCD_wr_ir, 0b00010100	; move cursor to right
-000142 e108
-000143 cfdf                      LCD_display_left:	JW	LCD_wr_ir, 0b00011000	; shifts display to left
-000144 e10c
-000145 cfdd                      LCD_display_right:	JW	LCD_wr_ir, 0b00011100	; shifts display to right
-000146 e00d
-000147 cfdb                      LCD_blink_on:		JW	LCD_wr_ir, 0b00001101	; Display=1,Cursor=0,Blink=1
-000148 e00c
-000149 cfd9                      LCD_blink_off:		JW	LCD_wr_ir, 0b00001100	; Display=1,Cursor=0,Blink=0
-00014a e00e
-00014b cfd7                      LCD_cursor_on:		JW	LCD_wr_ir, 0b00001110	; Display=1,Cursor=1,Blink=0
-00014c e00c
-00014d cfd5                      LCD_cursor_off:		JW	LCD_wr_ir, 0b00001100	; Display=1,Cursor=0,Blink=0
+000127 e001
+000128 cfe7                      LCD_clear:		JW	LCD_wr_ir, 0b00000001		; clear display
+000129 e002
+00012a cfe5                      LCD_home:		JW	LCD_wr_ir, 0b00000010		; return home
+00012b e100
+00012c cfe3                      LCD_cursor_left:	JW	LCD_wr_ir, 0b00010000	; move cursor to left
+00012d e104
+00012e cfe1                      LCD_cursor_right:	JW	LCD_wr_ir, 0b00010100	; move cursor to right
+00012f e108
+000130 cfdf                      LCD_display_left:	JW	LCD_wr_ir, 0b00011000	; shifts display to left
+000131 e10c
+000132 cfdd                      LCD_display_right:	JW	LCD_wr_ir, 0b00011100	; shifts display to right
+000133 e00d
+000134 cfdb                      LCD_blink_on:		JW	LCD_wr_ir, 0b00001101	; Display=1,Cursor=0,Blink=1
+000135 e00c
+000136 cfd9                      LCD_blink_off:		JW	LCD_wr_ir, 0b00001100	; Display=1,Cursor=0,Blink=0
+000137 e00e
+000138 cfd7                      LCD_cursor_on:		JW	LCD_wr_ir, 0b00001110	; Display=1,Cursor=1,Blink=0
+000139 e00c
+00013a cfd5                      LCD_cursor_off:		JW	LCD_wr_ir, 0b00001100	; Display=1,Cursor=0,Blink=0
                                  		
                                  LCD_init:
-00014e b705                      	in	w,MCUCR					; enable access to ext. SRAM
-00014f 6c00                      	sbr	w,(1<<SRE)+(1<<SRW10)
-000150 bf05                      	out	MCUCR,w
-000151 e001
-000152 dfd0                      	CW	LCD_wr_ir, 0b00000001	; clear display
-000153 e006
-000154 dfce                      	CW	LCD_wr_ir, 0b00000110	; entry mode set (Inc=1, Shift=0)
-000155 e00c
-000156 dfcc                      	CW	LCD_wr_ir, 0b00001100	; Display=1,Cursor=0,Blink=0	
-000157 e308
-000158 dfca                      	CW	LCD_wr_ir, 0b00111000	; 8bits=1, 2lines=1, 5x8dots=0
-000159 9508                      	ret
+00013b b705                      	in	w,MCUCR					; enable access to ext. SRAM
+00013c 6c00                      	sbr	w,(1<<SRE)+(1<<SRW10)
+00013d bf05                      	out	MCUCR,w
+00013e e001
+00013f dfd0                      	CW	LCD_wr_ir, 0b00000001	; clear display
+000140 e006
+000141 dfce                      	CW	LCD_wr_ir, 0b00000110	; entry mode set (Inc=1, Shift=0)
+000142 e00c
+000143 dfcc                      	CW	LCD_wr_ir, 0b00001100	; Display=1,Cursor=0,Blink=0	
+000144 e308
+000145 dfca                      	CW	LCD_wr_ir, 0b00111000	; 8bits=1, 2lines=1, 5x8dots=0
+000146 9508                      	ret
                                  
                                  LCD_pos:
                                  ; in	a0 = position (0x00..0x0f first line, 0x40..0x4f second line)
-00015a 2f02                      	mov	w,a0
-00015b 6800                      	ori	w,0b10000000
-00015c cfc6                      	rjmp	LCD_wr_ir
+000147 2f02                      	mov	w,a0
+000148 6800                      	ori	w,0b10000000
+000149 cfc6                      	rjmp	LCD_wr_ir
                                  
                                  LCD_cr:
                                  ; moving the cursor to the beginning of the line (carriage return)
-00015d 9100 8000                 	lds	w, LCD_IR			; read IR to check busy flag  (bit7)
-00015f fd07
-000160 cffc                      	JB1	w,7,LCD_cr			; Jump if Bit=1 (still busy)
-000161 7400                      	andi	w,0b01000000	; keep bit6 (begin of line 1/2)
-000162 6800                      	ori	w,0b10000000		; write address command
-000163 dfc7                      	rcall	lcd_4us			; delay to increment DRAM addr counter
-000164 9300 8000                 	sts	LCD_IR,w			; store in IR
-000166 9508                      	ret
+00014a 9100 8000                 	lds	w, LCD_IR			; read IR to check busy flag  (bit7)
+00014c fd07
+00014d cffc                      	JB1	w,7,LCD_cr			; Jump if Bit=1 (still busy)
+00014e 7400                      	andi	w,0b01000000	; keep bit6 (begin of line 1/2)
+00014f 6800                      	ori	w,0b10000000		; write address command
+000150 dfc7                      	rcall	lcd_4us			; delay to increment DRAM addr counter
+000151 9300 8000                 	sts	LCD_IR,w			; store in IR
+000153 9508                      	ret
                                  
                                  LCD_lf:
                                  ; moving the cursor to the beginning of the line 2 (line feed)
-000167 932f                      	push	a0				; safeguard a0
-000168 e420                      	ldi	a0,$40				; load position $40 (begin of line 2)
-000169 dff0                      	rcall	LCD_pos			; set cursor position
-00016a 912f                      	pop	a0					; restore a0
-                                 .include "printf.asm"			;include PRINTF library
-00016b 9508                      
+000154 932f                      	push	a0				; safeguard a0
+000155 e420                      	ldi	a0,$40				; load position $40 (begin of line 2)
+000156 dff0                      	rcall	LCD_pos			; set cursor position
+000157 912f                      	pop	a0					; restore a0
+                                 .include "printf.asm"    ; include formatted printing routines
+000158 9508                      
                                  ; purpose library, formatted output generation
                                  ; author (c) R.Holzer (adapted MICRO210/EE208 A.Schmid)
                                  ; v2019.02 20180821 AxS supports SRAM input from 0x0260
@@ -3684,30 +3651,30 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet
                                  ; === routines ================================================
                                  
                                  _printf:
-00016c 91ff
-00016d 91ef                      	POPZ			; z points to begin of "string"
-00016e 0fee
-00016f 1fff                      	MUL2Z			; multiply Z by two, (word ptr -> byte ptr)
-000170 93af
-000171 93bf                      	PUSHX
+000159 91ff
+00015a 91ef                      	POPZ			; z points to begin of "string"
+00015b 0fee
+00015c 1fff                      	MUL2Z			; multiply Z by two, (word ptr -> byte ptr)
+00015d 93af
+00015e 93bf                      	PUSHX
                                  		
                                  _printf_read:
-000172 95c8                      	lpm				; places prog_mem(Z) into r0 (=c)
-000173 9631                      	adiw	zl,1	; increment pointer Z
-000174 2000                      	tst	r0			; test for ZERO (=end of string)
-000175 f021                      	breq	_printf_end	; char=0 indicates end of ascii string
-000176 f04a                      	brmi	_printf_formatted ; bit7=1 indicates formatting character
-000177 2d00                      	mov	w,r0
-000178 d017                      	rcall	_putw	; display the character
-000179 cff8                      	rjmp	_printf_read	; read next character in the string
+00015f 95c8                      	lpm				; places prog_mem(Z) into r0 (=c)
+000160 9631                      	adiw	zl,1	; increment pointer Z
+000161 2000                      	tst	r0			; test for ZERO (=end of string)
+000162 f021                      	breq	_printf_end	; char=0 indicates end of ascii string
+000163 f04a                      	brmi	_printf_formatted ; bit7=1 indicates formatting character
+000164 2d00                      	mov	w,r0
+000165 d017                      	rcall	_putw	; display the character
+000166 cff8                      	rjmp	_printf_read	; read next character in the string
                                  	
                                  _printf_end:
-00017a 9631                      	adiw	zl,1	; point to the next character
-00017b 95f6
-00017c 95e7                      	DIV2Z			; divide by 2 (byte ptr -> word ptr)
-00017d 91bf
-00017e 91af                      	POPX
-00017f 9409                      	ijmp			; return to instruction after "string"
+000167 9631                      	adiw	zl,1	; point to the next character
+000168 95f6
+000169 95e7                      	DIV2Z			; divide by 2 (byte ptr -> word ptr)
+00016a 91bf
+00016b 91af                      	POPX
+00016c 9409                      	ijmp			; return to instruction after "string"
                                  
                                  _printf_formatted:
                                  
@@ -3718,194 +3685,194 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet
                                  ; FCHAR	1000'0100
                                  ; FSTR	1000'0101
                                  
-000180 fa00                      	bst	r0,0		; store sign in T
-000181 2d00                      	mov	w,r0		; store formatting character in w
-000182 95c8                      	lpm	
-000183 2da0                      	mov	xl,r0		; load x-pointer with SRAM address
-000184 36a0                      	cpi	xl,0x60
-000185 f010                      	brlo rio_space
+00016d fa00                      	bst	r0,0		; store sign in T
+00016e 2d00                      	mov	w,r0		; store formatting character in w
+00016f 95c8                      	lpm	
+000170 2da0                      	mov	xl,r0		; load x-pointer with SRAM address
+000171 36a0                      	cpi	xl,0x60
+000172 f010                      	brlo rio_space
                                  dataram_space:		; variable originates from SRAM memory
-000186 e0b2                      	ldi	xh,0x02		;>addresses are limited to 0x0260 through 0x02ff
-000187 c001                      	rjmp space_detect_end	;>that enables automatic detection of the origin
+000173 e0b2                      	ldi	xh,0x02		;>addresses are limited to 0x0260 through 0x02ff
+000174 c001                      	rjmp space_detect_end	;>that enables automatic detection of the origin
                                  rio_space:			; variable originates from reg or I/O space 
-000188 27bb                      	clr	xh			; clear high-byte, addresses are 0x0000 through 0x003f (0x005f)
+000175 27bb                      	clr	xh			; clear high-byte, addresses are 0x0000 through 0x003f (0x005f)
                                  space_detect_end:
-000189 9631                       	adiw	zl,1	; increment pointer Z
+000176 9631                       	adiw	zl,1	; increment pointer Z
                                  
                                  ;	JB1	w,6,_putdec
                                  ;	JB1	w,5,_putbin
                                  ;	JB1	w,4,_puthex
                                  ;	JB1	w,3,_putfrac
-00018a 3804
-00018b f079                      	JK	w,FCHAR,_putchar
-00018c 3805
-00018d f081                      	JK	w,FSTR ,_putstr
-00018e c015                      	rjmp	_putnum
+000177 3804
+000178 f079                      	JK	w,FCHAR,_putchar
+000179 3805
+00017a f081                      	JK	w,FSTR ,_putstr
+00017b c015                      	rjmp	_putnum
                                  	
-00018f cfe2                      	rjmp	_printf_read	
+00017c cfe2                      	rjmp	_printf_read	
                                  
                                  ; === putc (put character) ===============================
                                  ; in	w	character to put
                                  ;	e1,e0	address of output routine (UART, LCD putc)
                                  _putw:
-000190 932f
-000191 93ff
-000192 93ef                      	PUSH3	a0,zh,zl
-000193 2de4
-000194 2df5
-000195 2f20                      	MOV3	a0,zh,zl, w,e1,e0
-000196 9509                      	icall			; indirect call to "putc"
-000197 91ef
-000198 91ff
-000199 912f                      	POP3	a0,zh,zl
-00019a 9508                      	ret
+00017d 932f
+00017e 93ff
+00017f 93ef                      	PUSH3	a0,zh,zl
+000180 2de4
+000181 2df5
+000182 2f20                      	MOV3	a0,zh,zl, w,e1,e0
+000183 9509                      	icall			; indirect call to "putc"
+000184 91ef
+000185 91ff
+000186 912f                      	POP3	a0,zh,zl
+000187 9508                      	ret
                                  
                                  ; === putchar (put character) ============================
                                  ; in	x	pointer to character to put
                                  _putchar:
-00019b 910c                      	ld	w,x
-00019c dff3                      	rcall	_putw
-00019d cfd4                      	rjmp	_printf_read
+000188 910c                      	ld	w,x
+000189 dff3                      	rcall	_putw
+00018a cfd4                      	rjmp	_printf_read
                                  	
                                  ; === putstr (put string) ================================
                                  ; in	x	pointer to ascii string
                                  ;	b3,b2	address of output routine (UART, LCD putc)
                                  _putstr:
-00019e 910d                      	ld	w,x+
-00019f 2300                      	tst	w
-0001a0 f409                      	brne	PC+2
-0001a1 cfd0                      	rjmp	_printf_read
-0001a2 dfed                      	rcall	_putw
-0001a3 cffa                      	rjmp	_putstr
+00018b 910d                      	ld	w,x+
+00018c 2300                      	tst	w
+00018d f409                      	brne	PC+2
+00018e cfd0                      	rjmp	_printf_read
+00018f dfed                      	rcall	_putw
+000190 cffa                      	rjmp	_putstr
                                  
                                  ; === putnum (dec/bin/hex/frac) ===========================
                                  ; in	x	pointer to SRAM variable to print
                                  ; 	r0	formatting character
                                  	
                                  _putnum:
-0001a4 935f
-0001a5 934f
-0001a6 933f
-0001a7 932f                      	PUSH4	a3,a2,a1,a0	; safeguard a
-0001a8 939f
-0001a9 938f
-0001aa 937f
-0001ab 936f                      	PUSH4	b3,b2,b1,b0	; safeguard b	
-0001ac 912d
-0001ad 913d
-0001ae 914d
-0001af 915d                      	LDX4	a3,a2,a1,a0	; load operand to print into a
+000191 935f
+000192 934f
+000193 933f
+000194 932f                      	PUSH4	a3,a2,a1,a0	; safeguard a
+000195 939f
+000196 938f
+000197 937f
+000198 936f                      	PUSH4	b3,b2,b1,b0	; safeguard b	
+000199 912d
+00019a 913d
+00019b 914d
+00019c 915d                      	LDX4	a3,a2,a1,a0	; load operand to print into a
                                  
                                  ; FDEC	11bb'iiis
                                  ; FBIN	101i'iiis
                                  ; FHEX	1001'iiis
                                  ; FRACT	1000'1bbs
                                  
-0001b0 fd06
-0001b1 c006                      	JB1	w,6,_putdec
-0001b2 fd05
-0001b3 c00f                      	JB1	w,5,_putbin
-0001b4 fd04
-0001b5 c010                      	JB1	w,4,_puthex
-0001b6 fd03
-0001b7 c019                      	JB1	w,3,_putfrac
+00019d fd06
+00019e c006                      	JB1	w,6,_putdec
+00019f fd05
+0001a0 c00f                      	JB1	w,5,_putbin
+0001a1 fd04
+0001a2 c010                      	JB1	w,4,_puthex
+0001a3 fd03
+0001a4 c019                      	JB1	w,3,_putfrac
                                  
                                  ; FDEC	11bb'iiis
                                  _putdec:
-0001b8 e06a                      	ldi	b0,10		; b0 = base (10)
+0001a5 e06a                      	ldi	b0,10		; b0 = base (10)
                                  
-0001b9 2f70                      	mov	b1,w
-0001ba 9576                      	lsr	b1
-0001bb 7077                      	andi	b1,0b111	
-0001bc 9572                      	swap	b1		; b1 = format 0iii'0000 (integer digits)
-0001bd e080                      	ldi	b2,0		; b2 = dec. point position = 0 (right)
+0001a6 2f70                      	mov	b1,w
+0001a7 9576                      	lsr	b1
+0001a8 7077                      	andi	b1,0b111	
+0001a9 9572                      	swap	b1		; b1 = format 0iii'0000 (integer digits)
+0001aa e080                      	ldi	b2,0		; b2 = dec. point position = 0 (right)
                                  	
-0001be 2f90                      	mov	b3,w
-0001bf 9592                      	swap	b3
-0001c0 7093                      	andi	b3,0b11
-0001c1 9593                      	inc	b3			; b3 = number of bytes (1..4)
-0001c2 c01a                      	rjmp	_getnum	; get number of digits (iii)
+0001ab 2f90                      	mov	b3,w
+0001ac 9592                      	swap	b3
+0001ad 7093                      	andi	b3,0b11
+0001ae 9593                      	inc	b3			; b3 = number of bytes (1..4)
+0001af c01a                      	rjmp	_getnum	; get number of digits (iii)
                                  
                                  ; FBIN	101i'iiis	addr
                                  _putbin:	
-0001c3 e062                      	ldi	b0,2		; b0 = base (2)
-0001c4 e094                      	ldi	b3,4		; b3 = number of bytes (4)	
-0001c5 c003                      	rjmp	_getdig	; get number of digits (iii)
+0001b0 e062                      	ldi	b0,2		; b0 = base (2)
+0001b1 e094                      	ldi	b3,4		; b3 = number of bytes (4)	
+0001b2 c003                      	rjmp	_getdig	; get number of digits (iii)
                                  
                                  ; FHEX	1001'iiis	addr
                                  _puthex:	
-0001c6 e160                      	ldi	b0,16		; b0 = base (16)
-0001c7 e094                      	ldi	b3,4		; b3 = number of bytes (4)
-0001c8 c000                      	rjmp	_getdig
+0001b3 e160                      	ldi	b0,16		; b0 = base (16)
+0001b4 e094                      	ldi	b3,4		; b3 = number of bytes (4)
+0001b5 c000                      	rjmp	_getdig
                                  
                                  _getdig:
-0001c9 2f70                      	mov	b1,w
-0001ca 9576                      	lsr	b1
-0001cb 7077                      	andi	b1,0b111
-0001cc f409                      	brne	PC+2
-0001cd e078                      	ldi	b1,8		; if b1=0 then 8-digits
-0001ce 9572                      	swap	b1		; b1 = format 0iii'0000 (integer digits)
-0001cf e080                      	ldi	b2, 0		; b2 = dec. point position = 0 (right)
-0001d0 c00c                      	rjmp	_getnum
+0001b6 2f70                      	mov	b1,w
+0001b7 9576                      	lsr	b1
+0001b8 7077                      	andi	b1,0b111
+0001b9 f409                      	brne	PC+2
+0001ba e078                      	ldi	b1,8		; if b1=0 then 8-digits
+0001bb 9572                      	swap	b1		; b1 = format 0iii'0000 (integer digits)
+0001bc e080                      	ldi	b2, 0		; b2 = dec. point position = 0 (right)
+0001bd c00c                      	rjmp	_getnum
                                  
                                  ; FFRAC	1000'1bbs	addr	 00dd'dddd, 	iiii'ffff
                                  	
                                  _putfrac:
-0001d1 e06a                      	ldi	b0,10		; base=10	
-0001d2 95c8                      	lpm
-0001d3 2d80                      	mov	b2,r0		; load dec.point position
-0001d4 9631                      	adiw	zl,1	; increment char pointer
-0001d5 95c8                      	lpm
-0001d6 2d70                      	mov	b1,r0		; load ii.ff format
-0001d7 9631                      	adiw	zl,1	; increment char pointer
+0001be e06a                      	ldi	b0,10		; base=10	
+0001bf 95c8                      	lpm
+0001c0 2d80                      	mov	b2,r0		; load dec.point position
+0001c1 9631                      	adiw	zl,1	; increment char pointer
+0001c2 95c8                      	lpm
+0001c3 2d70                      	mov	b1,r0		; load ii.ff format
+0001c4 9631                      	adiw	zl,1	; increment char pointer
                                  	
-0001d8 2f90                      	mov	b3,w
-0001d9 9595                      	asr	b3
-0001da 7093                      	andi	b3,0b11
-0001db 9593                      	inc	b3			; b3 = number of bytes (1..4)
+0001c5 2f90                      	mov	b3,w
+0001c6 9595                      	asr	b3
+0001c7 7093                      	andi	b3,0b11
+0001c8 9593                      	inc	b3			; b3 = number of bytes (1..4)
                                  
-0001dc c000                      	rjmp	_getnum
+0001c9 c000                      	rjmp	_getnum
                                  
                                  _getnum:
                                  ; in 	a	4-byte variable
                                  ; 	b3	number of bytes (1..4)
                                  ;	T	sign, 0=unsigned, 1=signed
                                  
-0001dd 3094
-0001de f081                      	JK	b3,4,_printf_4b
-0001df 3093
-0001e0 f051                      	JK	b3,3,_printf_3b
-0001e1 3092
-0001e2 f021                      	JK	b3,2,_printf_2b	
+0001ca 3094
+0001cb f081                      	JK	b3,4,_printf_4b
+0001cc 3093
+0001cd f051                      	JK	b3,3,_printf_3b
+0001ce 3092
+0001cf f021                      	JK	b3,2,_printf_2b	
                                  	
                                  _printf_1b:			; sign extension
-0001e3 2733                      	clr	a1
-0001e4 f416                      	brtc	PC+3	; T=1 sign extension
-0001e5 fd27                      	sbrc	a0,7
-0001e6 ef3f                      	ldi	a1,0xff
+0001d0 2733                      	clr	a1
+0001d1 f416                      	brtc	PC+3	; T=1 sign extension
+0001d2 fd27                      	sbrc	a0,7
+0001d3 ef3f                      	ldi	a1,0xff
                                  _printf_2b:
-0001e7 2744                      	clr	a2
-0001e8 f416                      	brtc	PC+3	; T=1 sign extension	
-0001e9 fd37                      	sbrc	a1,7
-0001ea ef4f                      	ldi	a2,0xff
+0001d4 2744                      	clr	a2
+0001d5 f416                      	brtc	PC+3	; T=1 sign extension	
+0001d6 fd37                      	sbrc	a1,7
+0001d7 ef4f                      	ldi	a2,0xff
                                  _printf_3b:	
-0001eb 2755                      	clr	a3
-0001ec f416                      	brtc	PC+3	; T=1 sign extension
-0001ed fd47                      	sbrc	a2,7
-0001ee ef5f                      	ldi	a3,0xff
+0001d8 2755                      	clr	a3
+0001d9 f416                      	brtc	PC+3	; T=1 sign extension
+0001da fd47                      	sbrc	a2,7
+0001db ef5f                      	ldi	a3,0xff
                                  _printf_4b:
                                  
-0001ef d009                      	rcall	_ftoa		; float to ascii
-0001f0 916f
-0001f1 917f
-0001f2 918f
-0001f3 919f                      	POP4	b3,b2,b1,b0	; restore b
-0001f4 912f
-0001f5 913f
-0001f6 914f
-0001f7 915f                      	POP4	a3,a2,a1,a0	; restore a
+0001dc d009                      	rcall	_ftoa		; float to ascii
+0001dd 916f
+0001de 917f
+0001df 918f
+0001e0 919f                      	POP4	b3,b2,b1,b0	; restore b
+0001e1 912f
+0001e2 913f
+0001e3 914f
+0001e4 915f                      	POP4	a3,a2,a1,a0	; restore a
                                  	
-0001f8 cf79                      	rjmp	_printf_read
+0001e5 cf79                      	rjmp	_printf_read
                                  
                                  ; ===============================================
                                  ; func	ftoa
@@ -3919,123 +3886,123 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet
                                  ;	T	sign (T=0 unsiged, T=1 signed)
                                  
                                  _ftoa:
-0001f9 92cf                      	push	d0
-0001fa 92bf
-0001fb 92af
-0001fc 929f
-0001fd 928f                      	PUSH4	c3,c2,c1,c0	; c = fraction part, a = integer part
-0001fe 18bb
-0001ff 24aa
-000200 2499
-000201 2488                      	CLR4	c3,c2,c1,c0	; clear fraction part
+0001e6 92cf                      	push	d0
+0001e7 92bf
+0001e8 92af
+0001e9 929f
+0001ea 928f                      	PUSH4	c3,c2,c1,c0	; c = fraction part, a = integer part
+0001eb 18bb
+0001ec 24aa
+0001ed 2499
+0001ee 2488                      	CLR4	c3,c2,c1,c0	; clear fraction part
                                  
-000202 f486                      	brtc	_ftoa_plus	; if T=0 then unsigned
-000203 94e8                      	clt
-000204 2355                      	tst	a3				; if MSb(a)=1 then a=-a
-000205 f46a                      	brpl	_ftoa_plus
-000206 9468                      	set					; T=1 (minus)
-000207 2377                      	tst	b1
-000208 f009                      	breq	PC+2		; if b1=0 the print ALL digits
-000209 5170                      	subi	b1,0x10		; decrease int digits
-00020a 9550
-00020b 9540
-00020c 9530
-00020d 9520
-00020e ef0f
-00020f 1b20
-000210 0b30
-000211 0b40
-000212 0b50                      	NEG4	a3,a2,a1,a0	; negate a
+0001ef f486                      	brtc	_ftoa_plus	; if T=0 then unsigned
+0001f0 94e8                      	clt
+0001f1 2355                      	tst	a3				; if MSb(a)=1 then a=-a
+0001f2 f46a                      	brpl	_ftoa_plus
+0001f3 9468                      	set					; T=1 (minus)
+0001f4 2377                      	tst	b1
+0001f5 f009                      	breq	PC+2		; if b1=0 the print ALL digits
+0001f6 5170                      	subi	b1,0x10		; decrease int digits
+0001f7 9550
+0001f8 9540
+0001f9 9530
+0001fa 9520
+0001fb ef0f
+0001fc 1b20
+0001fd 0b30
+0001fe 0b40
+0001ff 0b50                      	NEG4	a3,a2,a1,a0	; negate a
                                  _ftoa_plus:	
-000213 2388                      	tst	b2				; b0=0 (only integer part)
-000214 f051                      	breq	_ftoa_int	
+000200 2388                      	tst	b2				; b0=0 (only integer part)
+000201 f051                      	breq	_ftoa_int	
                                  _ftoa_shift:	
-000215 9555
-000216 9547
-000217 9537
-000218 9527                      	ASR4	a3,a2,a1,a0	; a = integer part	
-000219 94b7
-00021a 94a7
-00021b 9497
-00021c 9487                      	ROR4	c3,c2,c1,c0	; c = fraction part
-00021d 958a
-00021e f7b1                      	DJNZ	b2,_ftoa_shift
+000202 9555
+000203 9547
+000204 9537
+000205 9527                      	ASR4	a3,a2,a1,a0	; a = integer part	
+000206 94b7
+000207 94a7
+000208 9497
+000209 9487                      	ROR4	c3,c2,c1,c0	; c = fraction part
+00020a 958a
+00020b f7b1                      	DJNZ	b2,_ftoa_shift
                                  _ftoa_int:
-00021f 937f                      	push	b1			; ii.ff (ii=int digits)
-000220 9572                      	swap	b1
-000221 707f                      	andi	b1,0x0f
+00020c 937f                      	push	b1			; ii.ff (ii=int digits)
+00020d 9572                      	swap	b1
+00020e 707f                      	andi	b1,0x0f
                                  	
-000222 e20e                      	ldi	w,'.'			; push decimal point
-000223 930f                      	push	w
+00020f e20e                      	ldi	w,'.'			; push decimal point
+000210 930f                      	push	w
                                  _ftoa_int1:
-000224 d045                      	rcall	_div41		; int=int/10
-000225 2d0c                      	mov	w,d0			; d=reminder
-000226 d030                      	rcall	_hex2asc
-000227 930f                      	push	w			; push rem(int/10)
-000228 2700
-000229 1720
-00022a 0730
-00022b 0740
-00022c 0750                      	TST4	a3,a2,a1,a0	; (int/10)=?
-00022d f029                      	breq	_ftoa_space	; (int/10)=0 then finished
-00022e 2377                      	tst	b1
-00022f f3a1                      	breq	_ftoa_int1	; if b1=0 then print ALL int-digits
-000230 957a
-000231 f791                      	DJNZ	b1,_ftoa_int1
-000232 c007                      	rjmp	_ftoa_sign
+000211 d045                      	rcall	_div41		; int=int/10
+000212 2d0c                      	mov	w,d0			; d=reminder
+000213 d030                      	rcall	_hex2asc
+000214 930f                      	push	w			; push rem(int/10)
+000215 2700
+000216 1720
+000217 0730
+000218 0740
+000219 0750                      	TST4	a3,a2,a1,a0	; (int/10)=?
+00021a f029                      	breq	_ftoa_space	; (int/10)=0 then finished
+00021b 2377                      	tst	b1
+00021c f3a1                      	breq	_ftoa_int1	; if b1=0 then print ALL int-digits
+00021d 957a
+00021e f791                      	DJNZ	b1,_ftoa_int1
+00021f c007                      	rjmp	_ftoa_sign
                                  _ftoa_space:
-000233 2377                      	tst	b1				; if b1=0 then print ALL int-digits
-000234 f029                      	breq	_ftoa_sign
-000235 957a                      	dec	b1
-000236 f019                      	breq	_ftoa_sign
-000237 e200                      	ldi	w,' '			; write spaces
-000238 df57                      	rcall	_putw	
-000239 cff9                      	rjmp	_ftoa_space
+000220 2377                      	tst	b1				; if b1=0 then print ALL int-digits
+000221 f029                      	breq	_ftoa_sign
+000222 957a                      	dec	b1
+000223 f019                      	breq	_ftoa_sign
+000224 e200                      	ldi	w,' '			; write spaces
+000225 df57                      	rcall	_putw	
+000226 cff9                      	rjmp	_ftoa_space
                                  _ftoa_sign:
-00023a f416                      	brtc	PC+3		; if T=1 then write 'minus'
-00023b e20d                      	ldi	w,'-'
-00023c df53                      	rcall	_putw
+000227 f416                      	brtc	PC+3		; if T=1 then write 'minus'
+000228 e20d                      	ldi	w,'-'
+000229 df53                      	rcall	_putw
                                  _ftoa_int3:
-00023d 910f                      	pop	w
-00023e 320e                      	cpi	w,'.'
-00023f f011                      	breq	PC+3
-000240 df4f                      	rcall	_putw
-000241 cffb                      	rjmp	_ftoa_int3
+00022a 910f                      	pop	w
+00022b 320e                      	cpi	w,'.'
+00022c f011                      	breq	PC+3
+00022d df4f                      	rcall	_putw
+00022e cffb                      	rjmp	_ftoa_int3
                                  
-000242 917f                      	pop	b1				; ii.ff (ff=frac digits)
-000243 707f                      	andi	b1,0x0f
-000244 2377                      	tst	b1
-000245 f059                      	breq	_ftoa_end
+00022f 917f                      	pop	b1				; ii.ff (ff=frac digits)
+000230 707f                      	andi	b1,0x0f
+000231 2377                      	tst	b1
+000232 f059                      	breq	_ftoa_end
                                  _ftoa_point:	
-000246 df49                      	rcall	_putw		; write decimal point
-000247 2d28
-000248 2d39
-000249 2d4a
-00024a 2d5b                      	MOV4	a3,a2,a1,a0, c3,c2,c1,c0		
+000233 df49                      	rcall	_putw		; write decimal point
+000234 2d28
+000235 2d39
+000236 2d4a
+000237 2d5b                      	MOV4	a3,a2,a1,a0, c3,c2,c1,c0		
                                  _ftoa_frac:
-00024b d011                      	rcall	_mul41		; d.frac=10*frac
-00024c 2d0c                      	mov	w,d0
-00024d d009                      	rcall	_hex2asc
-00024e df41                      	rcall	_putw
-00024f 957a
-000250 f7d1                      	DJNZ	b1,_ftoa_frac
+000238 d011                      	rcall	_mul41		; d.frac=10*frac
+000239 2d0c                      	mov	w,d0
+00023a d009                      	rcall	_hex2asc
+00023b df41                      	rcall	_putw
+00023c 957a
+00023d f7d1                      	DJNZ	b1,_ftoa_frac
                                  _ftoa_end:
-000251 908f
-000252 909f
-000253 90af
-000254 90bf                      	POP4	c3,c2,c1,c0
-000255 90cf                      	pop	d0
-000256 9508                      	ret
+00023e 908f
+00023f 909f
+000240 90af
+000241 90bf                      	POP4	c3,c2,c1,c0
+000242 90cf                      	pop	d0
+000243 9508                      	ret
                                  
                                  ; === hexadecimal to ascii ===
                                  ; in	w
                                  _hex2asc:
-000257 300a                      	cpi	w,10
-000258 f410                      	brsh	PC+3
-000259 5d00                      	addi	w,'0'
-00025a 9508                      	ret
-00025b 5a09                      	addi	w,('a'-10)
-00025c 9508                      	ret
+000244 300a                      	cpi	w,10
+000245 f410                      	brsh	PC+3
+000246 5d00                      	addi	w,'0'
+000247 9508                      	ret
+000248 5a09                      	addi	w,('a'-10)
+000249 9508                      	ret
                                  
                                  ; === multiply 4byte*1byte ===
                                  ; funct mul41
@@ -4047,19 +4014,19 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet
                                  ; out	a3..a0	result
                                  ; 	d0	result MSB (byte 4)
                                  ;
-00025d 24cc                      _mul41:	clr	d0			; clear byte4 of result
-00025e e200                      	ldi	w,32			; load bit counter
-00025f 9488                      __m41:	clc				; clear carry
-000260 fd20                      	sbrc	a0,0		; skip addition if LSB=0
-000261 0ec6                      	add	d0,b0			; add b to MSB of a
-000262 94c7
-000263 9557
-000264 9547
-000265 9537
-000266 9527                      	ROR5	d0,a3,a2,a1,a0	; shift-right c, LSB (of b) into carry
-000267 950a
-000268 f7b1                      	DJNZ	w,__m41		; Decrement and Jump if bit-count Not Zero
-000269 9508                      	ret
+00024a 24cc                      _mul41:	clr	d0			; clear byte4 of result
+00024b e200                      	ldi	w,32			; load bit counter
+00024c 9488                      __m41:	clc				; clear carry
+00024d fd20                      	sbrc	a0,0		; skip addition if LSB=0
+00024e 0ec6                      	add	d0,b0			; add b to MSB of a
+00024f 94c7
+000250 9557
+000251 9547
+000252 9537
+000253 9527                      	ROR5	d0,a3,a2,a1,a0	; shift-right c, LSB (of b) into carry
+000254 950a
+000255 f7b1                      	DJNZ	w,__m41		; Decrement and Jump if bit-count Not Zero
+000256 9508                      	ret
                                  
                                  ; === divide 4byte/1byte ===
                                  ; func div41
@@ -4068,428 +4035,140 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet
                                  ; out	a0..a3 	result 
                                  ;	d0	reminder
                                  ;
-00026a 24cc                      _div41:	clr	d0			; d will contain the remainder
-00026b e200                      	ldi	w,32			; load bit counter
-00026c 1f22
-00026d 1f33
-00026e 1f44
-00026f 1f55
-000270 1ccc                      __d41:	ROL5	d0,a3,a2,a1,a0	; shift carry into result c
-000271 1ac6                      	sub	d0, b0			; subtract b from remainder
-000272 f408                      	brcc	PC+2	
-000273 0ec6                      	add	d0, b0			; restore if remainder became negative
-000274 950a
-000275 f7b1                      	DJNZ	w,__d41		; Decrement and Jump if bit-count Not Zero
-000276 1f22
-000277 1f33
-000278 1f44
-000279 1f55                      	ROL4	a3,a2,a1,a0	; last shift (carry into result c)
-00027a 9550
-00027b 9540
-00027c 9530
-00027d 9520                      	COM4	a3,a2,a1,a0	; complement result
-00027e 9508                      	ret
-                                 .include "eeprom.asm"			;include internal EEPROM routines
+000257 24cc                      _div41:	clr	d0			; d will contain the remainder
+000258 e200                      	ldi	w,32			; load bit counter
+000259 1f22
+00025a 1f33
+00025b 1f44
+00025c 1f55
+00025d 1ccc                      __d41:	ROL5	d0,a3,a2,a1,a0	; shift carry into result c
+00025e 1ac6                      	sub	d0, b0			; subtract b from remainder
+00025f f408                      	brcc	PC+2	
+000260 0ec6                      	add	d0, b0			; restore if remainder became negative
+000261 950a
+000262 f7b1                      	DJNZ	w,__d41		; Decrement and Jump if bit-count Not Zero
+000263 1f22
+000264 1f33
+000265 1f44
+000266 1f55                      	ROL4	a3,a2,a1,a0	; last shift (carry into result c)
+000267 9550
+000268 9540
+000269 9530
+00026a 9520                      	COM4	a3,a2,a1,a0	; complement result
+00026b 9508                      	ret
                                  
-                                 ; purpose library, internal EEPROM
+                                 ; === initialization and configuration ===
                                  
-                                 eeprom_store:
-                                 ; in:	xh:xl 	EEPROM address
-                                 ;	a0	EEPROM data byte to store
+                                 .org 0x400
                                  
-00027f 99e1                      	sbic	EECR,EEWE	; skip if EEWE=0 (wait it EEWE=1)
-000280 cffe                      	rjmp	PC-1		; jump back to previous address
-000281 bbae                      	out	EEARL,xl		; load EEPROM address low	
-000282 bbbf                      	out	EEARH,xh		; load EEPROM address high
-000283 bb2d                      	out	EEDR,a0			; set EEPROM data register
-000284 f01f                      	brie	eeprom_cli	; if I=1 then temporarily disable interrupts
-000285 9ae2                      	sbi	EECR,EEMWE		; set EEPROM Master Write Enable
-000286 9ae1                      	sbi	EECR,EEWE		; set EEPROM Write Enable
-000287 9508                      	ret	
-                                 eeprom_cli:
-000288 94f8                      	cli					; disable interrupts
-000289 9ae2                      	sbi	EECR,EEMWE		; set EEPROM Master Write Enable
-00028a 9ae1                      	sbi	EECR,EEWE		; set EEPROM Write Enable
-00028b 9478                      	sei					; enable interrupts
-00028c 9508                      	ret
+000400 ef0f
+000401 bf0d
+000402 e100
+000403 bf0e                      reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
+000404 dd36                        rcall  LCD_init    ; initialize UART
                                  
-                                 eeprom_load:
-                                 ; in:	xh:xl 	EEPROM address
-                                 ; out:	a0	EEPROM data byte to load
+000405 ef00
+000406 bb01                        OUTI  KPDD,0xf0    ; bit0-3 pull-up and bits4-7 driven low
+000407 e00f
+000408 bb02                        OUTI  KPDO,0x0f    ;>(needs the two lines)
+000409 ef0f
+00040a bb07                        OUTI  DDRB,0xff    ; turn off LEDs
+00040b e00f
+00040c bf09                        OUTI  EIMSK,0x0f    ; enable INT0-INT3
+00040d e000
+00040e bf0a                        OUTI  EICRB,0b0    ;>at low level
+00040f 9a12                        sbi    DDRE,SPEAKER  ; enable sound
                                  
-00028d 99e1                      	sbic	EECR,EEWE	; skip if EEWE=0 (wait it EEWE=1)
-00028e cffe                      	rjmp	PC-1		; jump back to previous address
-00028f bbae                      	out	EEARL,xl	
-000290 bbbf                      	out	EEARH,xh
-000291 9ae0                      	sbi	EECR,EERE		; set EEPROM Read Enable
-000292 b32d                      	in	a0,EEDR			; read data register of EEPROM
-000293 9508                      
-                                 ;==== Main code ===
+000410 e10b
+000411 2e40
+000412 e001
+000413 2e50
+000414 dd44                        PRINTF LCD
+000415 0d0d
+000416 6568
+000417 6c6c
+000418 206f
+000419 6f77
+00041a 6c72
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(155): warning: .cseg .db misalignment - padding zero byte
+00041b 0064                      .db  CR,CR,"hello world"
+                                 
+00041c 2422                        clr    wr0
+00041d 2411                        clr    wr1
+00041e 24ff                        clr    wr2
+                                 
+00041f 2733                        clr    a1        
+000420 2744                        clr    a2
+000421 2755                        clr    a3
+000422 2777                        clr    b1
+000423 2788                        clr    b2
+000424 2799                        clr    b3
+                                 
+000425 9478                        sei
+                                   ;jmp  main        ; not useful in this case, kept for modularity
+                                 
+                                   ; === main program ===
                                  main:
-000294 fc67
-000295 c08b                      	JB1		r6,7,display_ask_new_code;ask to set the new passcode on LCD
-000296 fc64
-000297 c04c                      	JB1		r6,4,exit_code_verification;test if we have to check the code
-000298 fc62
-000299 c052                      	JB1		r6,2,display_ask_code;ask to the user to enter passcode
-00029a fe61
-00029b c0ed                      	JB0		r6,1,system_inactive;check if the system needs to be active
-00029c fc61
-00029d c109                      	JB1		r6,1,system_active	;check if the system needs to be active
-00029e cff5                      	rjmp main
+000426 20ff                        tst    wr2        ; check flag/semaphore
+000427 f3f1                        breq  main
+000428 24ff                        clr    wr2
+000429 2722                        clr    a0
+00042a 0d21                        add    a0, wr1
+00042b 0d22                        add    a0, wr0
+00042c 27ee                        clr Zl
+00042d 27ff                        clr ZH
+                                   ; TO BE COMPLETED AT THIS LOCATION
+00042e e8ee                        ldi    ZL, low(2*(KeySet01))
+00042f e0f8                        ldi    ZH, high(2*(KeySet01))
+000430 0de2                        add    ZL, wr0
+000431 0de2                        add    ZL, wr0
+000432 0de2                        add    ZL, wr0
+000433 0de2                        add    ZL, wr0
+000434 0de1                        add    ZL, wr1
+000435 9124                        lpm    a0, Z    ; decoding ascii  
+                                   
+000436 2766                        clr b0 
+000437 2777                        clr b1
                                  
-                                 wrong_code_test:
-00029f 932f
-0002a0 2d26
-0002a1 7f27
-0002a2 2e62
-0002a3 912f                      	SET_BIT_0	r6,3			;reset bool bits 
-0002a4 932f
-0002a5 2d26
-0002a6 7b2f
-0002a7 2e62
-0002a8 912f                      	SET_bit_0	r6,6
-0002a9 932f
-0002aa 2d26
-0002ab 7d2f
-0002ac 2e62
-0002ad 912f                      	SET_BIT_0	r6,5
-0002ae 932f
-0002af 2d26
-0002b0 7e2f
-0002b1 2e62
-0002b2 912f                      	SET_BIT_0	r6,4
+000438 e464                        ldi b0, 0x44
                                  
-0002b3 de88                      	rcall		LCD_home		;write "Code FALSE" on the LCD
-0002b4 e20e
-0002b5 2e40
-0002b6 e001
-0002b7 2e50
-0002b8 deb3                      	PRINTF		LCD 
-0002b9 6f43
-0002ba 6564
-0002bb 4620
-0002bc 4c41
-0002bd 4553
-0002be 2020
-0002bf 2020
-0002c0 2020
-0002c1 000a                      	.db "Code FALSE      ",LF,0
-0002c2 e20e
-0002c3 2e40
-0002c4 e001
-0002c5 2e50
-0002c6 dea5                      	PRINTF		LCD
-0002c7 2020
-0002c8 2020
-0002c9 2020
-0002ca 2020
-0002cb 2020
-0002cc 2020
-0002cd 2020
-0002ce 2020
-0002cf 000a                      	.db "                ",LF,0
-0002d0 ed00
-0002d1 2e30
-0002d2 e008
-0002d3 930f
-0002d4 923f
-0002d5 e300
-0002d6 2e30
-0002d7 e006
-0002d8 943a
-0002d9 f7f1
-0002da 943a
-0002db 950a
-0002dc f7d9
-0002dd 903f
-0002de 910f
-0002df 943a
-0002e0 f791
-0002e1 950a
-0002e2 f781                      	WAIT_MS		2000
-0002e3 cfb0                      	rjmp		main
+000439 2366                        tst b0
+00043a f411                        brne add_to_b0
+00043b 2f72                        mov b1, a0
+00043c c001                        rjmp end
+                                   add_to_b0:
+00043d 2f62                        mov b0, a0
+                                   end:
                                  
-                                 exit_code_verification:			;exit the passcode verification test
-0002e4 932f
-0002e5 2d26
-0002e6 7f2b
-0002e7 2e62
-0002e8 912f                      	SET_BIT_0	r6,2
-0002e9 fe63
-0002ea c054                      	JB0			r6,3,desactivate_sound
-0002eb cfb3                      	rjmp		wrong_code_test
+00043e e10b
+00043f 2e40
+000440 e001
+000441 2e50
+000442 dd16                        PRINTF LCD
+000443 0a0d
+000444 1685                        .db CR, LF, FSTR, b
                                  
-                                 display_ask_code:				;ask the user to enter the passcode
-0002ec de4f                      	rcall		LCD_home
-0002ed e20e
-0002ee 2e40
-0002ef e001
-0002f0 2e50
-0002f1 de7a                      	PRINTF		LCD
-0002f2 6e45
-0002f3 6574
-0002f4 2072
-0002f5 6874
-0002f6 2065
-0002f7 6f63
-0002f8 6564
-0002f9 2020
-0002fa 000a                      	.db "Enter the code  ",LF,0
-0002fb e20e
-0002fc 2e40
-0002fd e001
-0002fe 2e50
-0002ff de6c                      	PRINTF		LCD
-000300 2020
-000301 2020
-000302 2020
-000303 2020
-000304 2020
-000305 2020
-000306 2020
-000307 2020
-000308 000a                      	.db "                ",LF,0
-000309 fc60
-00030a c001                      	JB1			r6,0,different_sound;check if we need to play a sound when passcode required
-00030b cf88                      	rjmp main
+                                 ;PRINTF LCD
+                                 ;.db  CR,LF,"KPD=",FCHAR,a," ascii=",FHEX,b
                                  
-                                 different_sound:
-00030c fc70
-00030d cf86                      	JB1 r7,0,main
-00030e 9a1a                      	sbi		PORTE,SPEAKER		
-00030f ed0c
-000310 2e30
-000311 e003
-000312 943a
-000313 f7f1
-000314 943a
-000315 950a
-000316 f7d9                          WAIT_US 550
-000317 981a                          cbi		PORTE,SPEAKER
-000318 ed0c
-000319 2e30
-00031a e003
-00031b 943a
-00031c f7f1
-00031d 943a
-00031e 950a
-00031f f7d9                          WAIT_US 550
-000320 cf73                      	rjmp	main
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(210): warning: .cseg .db misalignment - padding zero byte
+000445 0000                      .db  0
+000446 cfdf                        rjmp  main
+                                   
+                                 ; code conversion table, character set #1 key to ASCII  
                                  
-                                 display_ask_new_code:			;display "Set the new code" on the LCD 
-000321 de1a                      	rcall		LCD_home
-000322 e20e
-000323 2e40
-000324 e001
-000325 2e50
-000326 de45                      	PRINTF		LCD
-000327 6553
-000328 2074
-000329 6874
-00032a 2065
-00032b 656e
-00032c 2077
-00032d 6f63
-00032e 6564
-00032f 000a                      	.db "Set the new code",LF,0
-000330 e20e
-000331 2e40
-000332 e001
-000333 2e50
-000334 de37                      	PRINTF		LCD
-000335 2020
-000336 2020
-000337 2020
-000338 2020
-000339 2020
-00033a 2020
-00033b 2020
-00033c 2020
-00033d 000a                      	.db "                ",LF,0
-00033e cf55                      	rjmp main
                                  
-                                 desactivate_sound:
-00033f 932f
-000340 2d26
-000341 7f2e
-000342 2e62
-000343 912f                      	SET_BIT_0	r6,0			;reset bool bits
-000344 932f
-000345 2d26
-000346 7f2d
-000347 2e62
-000348 912f                      	SET_BIT_0	r6,1
-000349 932f
-00034a 2d26
-00034b 7b2f
-00034c 2e62
-00034d 912f                      	SET_bit_0	r6,6
-00034e 932f
-00034f 2d26
-000350 7d2f
-000351 2e62
-000352 912f                      	SET_BIT_0	r6,5
-000353 932f
-000354 2d26
-000355 7e2f
-000356 2e62
-000357 912f                      	SET_BIT_0	r6,4
+                                 ; code conversion table, character set #1 key to ASCII	
+                                 KeySet01:
+000447 3231
+000448 4133                      .db 0x31, 0x32, 0x33, 0x41 ; 1, 2, 3, A
+000449 3534
+00044a 4236                      .db 0x34, 0x35, 0x36, 0x42 ; 4, 5, 6, B
+00044b 3837
+00044c 4339                      .db 0x37, 0x38, 0x39, 0x43 ; 7, 8, 9, C
+00044d 302a
+00044e 4423                      .db 0x2A, 0x30, 0x23, 0x44 ; *, 0, #, D
                                  
-000358 dde3                      	rcall		LCD_home		;print "Code OK" on the LCD 
-000359 e20e
-00035a 2e40
-00035b e001
-00035c 2e50
-00035d de0e                      	PRINTF		LCD 
-00035e 6f43
-00035f 6564
-000360 4f20
-000361 204b
-000362 2020
-000363 2020
-000364 2020
-000365 2020
-000366 000a                      	.db "Code OK         ",LF,0
-000367 e20e
-000368 2e40
-000369 e001
-00036a 2e50
-00036b de00                      	PRINTF		LCD
-00036c 2020
-00036d 2020
-00036e 2020
-00036f 2020
-000370 2020
-000371 2020
-000372 2020
-000373 2020
-000374 000a                      	.db "                ",LF,0
-000375 ed00
-000376 2e30
-000377 e008
-000378 930f
-000379 923f
-00037a e300
-00037b 2e30
-00037c e006
-00037d 943a
-00037e f7f1
-00037f 943a
-000380 950a
-000381 f7d9
-000382 903f
-000383 910f
-000384 943a
-000385 f791
-000386 950a
-000387 f781                      	WAIT_MS		2000
-000388 cf0b                      	rjmp		main
-                                 
-                                 system_inactive:				;print "System inactive" on the LCD
-000389 ddb2                      	rcall		LCD_home
-00038a e20e
-00038b 2e40
-00038c e001
-00038d 2e50
-00038e dddd                      	PRINTF		LCD 
-00038f 7953
-000390 7473
-000391 6d65
-000392 6920
-000393 616e
-000394 7463
-000395 7669
-000396 2065
-000397 000a                      	.db "System inactive ",LF,0
-000398 e20e
-000399 2e40
-00039a e001
-00039b 2e50
-00039c ddcf                      	PRINTF		LCD
-00039d 2020
-00039e 2020
-00039f 2020
-0003a0 2020
-0003a1 2020
-0003a2 2020
-0003a3 2020
-0003a4 2020
-0003a5 000a                      	.db "                ",LF,0
-0003a6 ceed                      	rjmp		main
-                                 
-                                 system_active:					;branch to subroutine when system is active
-0003a7 fc60
-0003a8 c003                      	JB1		r6,0,speaker_alarm
-0003a9 fe60
-0003aa c01f                      	JB0		r6,0,speaker_off
-0003ab 9508                      	ret
-                                 
-                                 speaker_alarm:
-0003ac dd8f                      	rcall	LCD_home			;print "System active" on the LCD
-0003ad e20e
-0003ae 2e40
-0003af e001
-0003b0 2e50
-0003b1 ddba                      	PRINTF	LCD 
-0003b2 7953
-0003b3 7473
-0003b4 6d65
-0003b5 6120
-0003b6 7463
-0003b7 7669
-0003b8 2065
-0003b9 0a20
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(333): warning: .cseg .db misalignment - padding zero byte
-0003ba 0000                      	.db "System active  ",LF,0
-0003bb e20e
-0003bc 2e40
-0003bd e001
-0003be 2e50
-0003bf ddac                      	PRINTF	LCD
-0003c0 6f53
-0003c1 6e75
-0003c2 2064
-0003c3 203a
-0003c4 4e4f
-0003c5 2020
-0003c6 2020
-0003c7 0a20
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\projet_alex.asm(335): warning: .cseg .db misalignment - padding zero byte
-0003c8 0000                      	.db "Sound : ON     ",LF,0
-                                 
-0003c9 cf42                          rjmp	different_sound
-                                 
-                                 speaker_off:					;turn off the speaker
-0003ca dd71                      	rcall	LCD_home
-0003cb e20e
-0003cc 2e40
-0003cd e001
-0003ce 2e50
-0003cf dd9c                      	PRINTF	LCD 
-0003d0 7953
-0003d1 7473
-0003d2 6d65
-0003d3 6120
-0003d4 7463
-0003d5 7669
-0003d6 2065
-0003d7 2020
-0003d8 000a                      	.db "System active   ",LF,0
-0003d9 e20e
-0003da 2e40
-0003db e001
-0003dc 2e50
-0003dd dd8e                      	PRINTF	LCD
-0003de 6f53
-0003df 6e75
-0003e0 2064
-0003e1 203a
-0003e2 464f
-0003e3 2046
-0003e4 2020
-0003e5 2020
-0003e6 000a                      	.db "Sound : OFF     ",LF,0
 
 
 RESOURCE USE INFORMATION
@@ -4507,41 +4186,41 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega128" register use summary:
-x  :   6 y  :   0 z  :   0 r0 :   7 r1 :   0 r2 :   0 r3 :  35 r4 :  15 
-r5 :  15 r6 :  75 r7 :   3 r8 :   5 r9 :   5 r10:   5 r11:   6 r12:  11 
-r13:   0 r14:   0 r15:   0 r16: 185 r17:   0 r18: 179 r19:  15 r20:  15 
-r21:  15 r22:  21 r23:  31 r24:   9 r25:  15 r26:  12 r27:  12 r28:   0 
-r29:   0 r30:  11 r31:   6 
-Registers used: 25 out of 35 (71.4%)
+x  :   6 y  :   0 z  :   1 r0 :   7 r1 :   7 r2 :  10 r3 :  58 r4 :   3 
+r5 :   3 r6 :   0 r7 :   0 r8 :   5 r9 :   5 r10:   5 r11:   6 r12:  11 
+r13:   0 r14:   8 r15:   4 r16: 221 r17:   1 r18:  30 r19:  16 r20:  16 
+r21:  16 r22:  13 r23:  28 r24:   8 r25:  16 r26:   4 r27:   4 r28:   0 
+r29:   0 r30:  18 r31:   8 
+Registers used: 29 out of 35 (82.9%)
 
 "ATmega128" instruction use summary:
-.lds  :   0 .sts  :   0 adc   :   0 add   :   2 adiw  :   5 and   :   0 
+.lds  :   0 .sts  :   0 adc   :   0 add   :   9 adiw  :   5 and   :   4 
 andi  :   7 asr   :   2 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   1 brcs  :   0 break :   0 breq  :  19 brge  :   0 brhc  :   0 
-brhs  :   0 brid  :   0 brie  :   1 brlo  :   1 brlt  :   0 brmi  :   1 
-brne  :  31 brpl  :   1 brsh  :   1 brtc  :   6 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   2 call  :   0 cbi   :   2 cbr   :  16 
-clc   :   2 clh   :   0 cli   :   4 cln   :   0 clr   :  13 cls   :   0 
-clt   :   1 clv   :   0 clz   :   0 com   :  10 cp    :   4 cpc   :   3 
-cpi   :  13 cpse  :   0 dec   :  34 elpm  :   0 eor   :   0 fmul  :   0 
-fmuls :   0 fmulsu:   0 icall :   1 ijmp  :   1 in    :   2 inc   :   2 
-jmp   :   4 ld    :   6 ldd   :   0 ldi   : 102 lds   :   3 lpm   :  12 
-lsl   :   1 lsr   :   3 mov   : 114 movw  :   0 mul   :   0 muls  :   0 
-mulsu :   0 neg   :   0 nop   :   1 or    :   0 ori   :   2 out   :  12 
-pop   :  62 push  :  61 rcall :  52 ret   :  16 reti  :  20 rjmp  :  70 
-rol   :  12 ror   :  13 sbc   :   3 sbci  :   0 sbi   :   7 sbic  :   4 
-sbis  :   1 sbiw  :   0 sbr   :  12 sbrc  :  22 sbrs  :  12 sec   :   1 
-seh   :   0 sei   :   5 sen   :   0 ser   :   0 ses   :   0 set   :   1 
+brcc  :   1 brcs  :   0 break :   0 breq  :  17 brge  :   0 brhc  :   0 
+brhs  :   0 brid  :   0 brie  :   0 brlo  :   1 brlt  :   0 brmi  :   1 
+brne  :  44 brpl  :   1 brsh  :   1 brtc  :   5 brts  :   0 brvc  :   0 
+brvs  :   0 bset  :   0 bst   :   1 call  :   0 cbi   :   9 cbr   :   0 
+clc   :   1 clh   :   0 cli   :   0 cln   :   0 clr   :  25 cls   :   0 
+clt   :   1 clv   :   0 clz   :   0 com   :   8 cp    :   1 cpc   :   3 
+cpi   :  10 cpse  :   0 dec   :  46 elpm  :   0 eor   :   0 fmul  :   0 
+fmuls :   0 fmulsu:   0 icall :   1 ijmp  :   1 in    :   5 inc   :   2 
+jmp   :   5 ld    :   6 ldd   :   0 ldi   : 100 lds   :   3 lpm   :  14 
+lsl   :   1 lsr   :   3 mov   :  54 movw  :   0 mul   :   0 muls  :   0 
+mulsu :   0 neg   :   0 nop   :   1 or    :   0 ori   :   2 out   :  14 
+pop   :  39 push  :  38 rcall :  25 ret   :  12 reti  :   1 rjmp  :  63 
+rol   :  10 ror   :  13 sbc   :   3 sbci  :   0 sbi   :  10 sbic  :   0 
+sbis  :   9 sbiw  :   0 sbr   :   1 sbrc  :  11 sbrs  :   0 sec   :   0 
+seh   :   0 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   1 
 sev   :   0 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 
-sts   :   4 sub   :   4 subi  :   3 swap  :   4 tst   :   8 wdr   :   0 
+sts   :   3 sub   :   3 subi  :   3 swap  :   4 tst   :  14 wdr   :   0 
 
-Instructions used: 63 out of 114 (55.3%)
+Instructions used: 58 out of 114 (50.9%)
 
 "ATmega128" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0007d0   1696    252   1948  131072   1.5%
+[.cseg] 0x000000 0x00089e   1362     36   1398  131072   1.1%
 [.dseg] 0x000100 0x000100      0      0      0    4096   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    4096   0.0%
 
-Assembly complete, 0 errors, 2 warnings
+Assembly complete, 0 errors, 6 warnings
