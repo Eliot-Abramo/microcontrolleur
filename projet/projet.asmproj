@@ -15,7 +15,7 @@
     <Name>projet</Name>
     <RootNamespace>projet</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
-    <EntryFile>$(MSBuildProjectDirectory)\main.asm</EntryFile>
+    <EntryFile>$(MSBuildProjectDirectory)\Mathias.asm</EntryFile>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
@@ -64,6 +64,9 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AsmFile1.asm">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="definitions.asm">
       <SubType>Code</SubType>
     </Compile>
@@ -76,7 +79,7 @@
     <Compile Include="macros.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="main.asm">
+    <Compile Include="Mathias.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="printf.asm">
