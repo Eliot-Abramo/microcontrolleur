@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.6  C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm Mon Apr 29 17:59:45 2024
+AVRASM ver. 2.2.6  C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm Mon Apr 29 17:57:25 2024
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
 C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(12): Including file 'C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\macros.asm'
@@ -4118,7 +4118,7 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathia
 00042c 27ee                        clr Zl
 00042d 27ff                        clr ZH
                                    ; TO BE COMPLETED AT THIS LOCATION
-00042e e8e0                        ldi    ZL, low(2*(KeySet01))
+00042e e8ee                        ldi    ZL, low(2*(KeySet01))
 00042f e0f8                        ldi    ZH, high(2*(KeySet01))
 000430 0de2                        add    ZL, wr0
 000431 0de2                        add    ZL, wr0
@@ -4126,36 +4126,48 @@ C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathia
 000433 0de2                        add    ZL, wr0
 000434 0de1                        add    ZL, wr1
 000435 9124                        lpm    a0, Z    ; decoding ascii  
+                                   
+000436 2766                        clr b0 
+000437 2777                        clr b1
                                  
-000436 e434                        ldi a1, 0x44
-000437 e10b
-000438 2e40
-000439 e001
-00043a 2e50
-00043b dd1d                        PRINTF LCD
-00043c 0a0d
-00043d 1285                        .db CR, LF, FSTR, a
+000438 e464                        ldi b0, 0x44
+                                 
+000439 2366                        tst b0
+00043a f411                        brne add_to_b0
+00043b 2f72                        mov b1, a0
+00043c c001                        rjmp end
+                                   add_to_b0:
+00043d 2f62                        mov b0, a0
+                                   end:
+                                 
+00043e e10b
+00043f 2e40
+000440 e001
+000441 2e50
+000442 dd16                        PRINTF LCD
+000443 0a0d
+000444 1685                        .db CR, LF, FSTR, b
                                  
                                  ;PRINTF LCD
                                  ;.db  CR,LF,"KPD=",FCHAR,a," ascii=",FHEX,b
                                  
-C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(198): warning: .cseg .db misalignment - padding zero byte
-00043e 0000                      .db  0
-00043f cfe6                        rjmp  main
+C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\mathias.asm(210): warning: .cseg .db misalignment - padding zero byte
+000445 0000                      .db  0
+000446 cfdf                        rjmp  main
                                    
                                  ; code conversion table, character set #1 key to ASCII  
                                  
                                  
                                  ; code conversion table, character set #1 key to ASCII	
                                  KeySet01:
-000440 3231
-000441 4133                      .db 0x31, 0x32, 0x33, 0x41 ; 1, 2, 3, A
-000442 3534
-000443 4236                      .db 0x34, 0x35, 0x36, 0x42 ; 4, 5, 6, B
-000444 3837
-000445 4339                      .db 0x37, 0x38, 0x39, 0x43 ; 7, 8, 9, C
-000446 302a
-000447 4423                      .db 0x2A, 0x30, 0x23, 0x44 ; *, 0, #, D
+000447 3231
+000448 4133                      .db 0x31, 0x32, 0x33, 0x41 ; 1, 2, 3, A
+000449 3534
+00044a 4236                      .db 0x34, 0x35, 0x36, 0x42 ; 4, 5, 6, B
+00044b 3837
+00044c 4339                      .db 0x37, 0x38, 0x39, 0x43 ; 7, 8, 9, C
+00044d 302a
+00044e 4423                      .db 0x2A, 0x30, 0x23, 0x44 ; *, 0, #, D
                                  
 
 
@@ -4176,8 +4188,8 @@ counted separately from r26..r31 here.
 "ATmega128" register use summary:
 x  :   6 y  :   0 z  :   1 r0 :   7 r1 :   7 r2 :  10 r3 :  58 r4 :   3 
 r5 :   3 r6 :   0 r7 :   0 r8 :   5 r9 :   5 r10:   5 r11:   6 r12:  11 
-r13:   0 r14:   8 r15:   4 r16: 221 r17:   1 r18:  28 r19:  17 r20:  16 
-r21:  16 r22:   9 r23:  26 r24:   8 r25:  16 r26:   4 r27:   4 r28:   0 
+r13:   0 r14:   8 r15:   4 r16: 221 r17:   1 r18:  30 r19:  16 r20:  16 
+r21:  16 r22:  13 r23:  28 r24:   8 r25:  16 r26:   4 r27:   4 r28:   0 
 r29:   0 r30:  18 r31:   8 
 Registers used: 29 out of 35 (82.9%)
 
@@ -4186,28 +4198,28 @@ Registers used: 29 out of 35 (82.9%)
 andi  :   7 asr   :   2 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   1 brcs  :   0 break :   0 breq  :  17 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   1 brlt  :   0 brmi  :   1 
-brne  :  43 brpl  :   1 brsh  :   1 brtc  :   5 brts  :   0 brvc  :   0 
+brne  :  44 brpl  :   1 brsh  :   1 brtc  :   5 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   1 call  :   0 cbi   :   9 cbr   :   0 
-clc   :   1 clh   :   0 cli   :   0 cln   :   0 clr   :  23 cls   :   0 
+clc   :   1 clh   :   0 cli   :   0 cln   :   0 clr   :  25 cls   :   0 
 clt   :   1 clv   :   0 clz   :   0 com   :   8 cp    :   1 cpc   :   3 
 cpi   :  10 cpse  :   0 dec   :  46 elpm  :   0 eor   :   0 fmul  :   0 
 fmuls :   0 fmulsu:   0 icall :   1 ijmp  :   1 in    :   5 inc   :   2 
 jmp   :   5 ld    :   6 ldd   :   0 ldi   : 100 lds   :   3 lpm   :  14 
-lsl   :   1 lsr   :   3 mov   :  52 movw  :   0 mul   :   0 muls  :   0 
+lsl   :   1 lsr   :   3 mov   :  54 movw  :   0 mul   :   0 muls  :   0 
 mulsu :   0 neg   :   0 nop   :   1 or    :   0 ori   :   2 out   :  14 
-pop   :  39 push  :  38 rcall :  25 ret   :  12 reti  :   1 rjmp  :  62 
+pop   :  39 push  :  38 rcall :  25 ret   :  12 reti  :   1 rjmp  :  63 
 rol   :  10 ror   :  13 sbc   :   3 sbci  :   0 sbi   :  10 sbic  :   0 
 sbis  :   9 sbiw  :   0 sbr   :   1 sbrc  :  11 sbrs  :   0 sec   :   0 
 seh   :   0 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   1 
 sev   :   0 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 
-sts   :   3 sub   :   3 subi  :   3 swap  :   4 tst   :  13 wdr   :   0 
+sts   :   3 sub   :   3 subi  :   3 swap  :   4 tst   :  14 wdr   :   0 
 
 Instructions used: 58 out of 114 (50.9%)
 
 "ATmega128" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000890   1348     36   1384  131072   1.1%
+[.cseg] 0x000000 0x00089e   1362     36   1398  131072   1.1%
 [.dseg] 0x000100 0x000100      0      0      0    4096   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    4096   0.0%
 
