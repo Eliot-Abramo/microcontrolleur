@@ -74,9 +74,9 @@
 
 
  ; === definitions ===
-.equ  KPDD = DDRD
-.equ  KPDO = PORTD
-.equ  KPDI = PIND
+.equ  KPDD = DDRE
+.equ  KPDO = PORTE
+.equ  KPDI = PINE
 
 .equ  KPD_DELAY = 30   ; msec, debouncing keys of keypad
 
@@ -89,35 +89,36 @@
 ; === interrupt vector table ===
 .org 0
 	jmp reset
-	jmp isr_ext_int0   ; external interrupt INT0
-	jmp isr_ext_int1   ; external interrupt INT1
-	jmp isr_ext_int2   ; external interrupt INT2
-	jmp isr_ext_int3   ; external interrupt INT3
+.org 10
+	jmp isr_ext_int0   ; external interrupt INT4
+	jmp isr_ext_int1   ; external interrupt INT5
+	jmp isr_ext_int2   ; external interrupt INT6
+	jmp isr_ext_int3   ; external interrupt INT7
 
 
 ; === interrupt service routines ===
 isr_ext_int0:
-	INVP  PORTB,0      ;;debug
+	INVP  PORTB,0x00     ;;debug
 	_LDI  wr0, 0x00    ; detect row 1
-	_LDI  mask, 0b00000001
+	_LDI  mask, 0b00010000
 	rjmp  column_detect
 
 isr_ext_int1:
-	INVP  PORTB,1
+	INVP  PORTB,0x01
 	_LDI  wr0, 0x01    ; detect row 2
-	_LDI  mask, 0b00000010
+	_LDI  mask, 0b00100000
 	rjmp  column_detect
 
 isr_ext_int2:
 	INVP  PORTB,0x02
 	_LDI  wr0, 0x02    ; detect row 3
-	_LDI  mask, 0b00000100
+	_LDI  mask, 0b01000000
 	rjmp  column_detect
 
 isr_ext_int3:
-	INVP  PORTB,3
+	INVP  PORTB,0x03
 	_LDI  wr0, 0x03    ; detect row 4
-	_LDI  mask, 0b00001000
+	_LDI  mask, 0b10000000
 	rjmp  column_detect
 
 column_detect:
@@ -125,7 +126,7 @@ column_detect:
 
 col7:
 	WAIT_MS  KPD_DELAY
-	OUTI  KPDO,0x7f    ; check column 7
+	OUTI  KPDO,0xf7    ; check column 7
 	WAIT_MS  KPD_DELAY
 	in    w,KPDI
 	and    w,mask
@@ -137,7 +138,7 @@ col7:
   
 col6:
 	WAIT_MS  KPD_DELAY
-	OUTI  KPDO,0xbf     ; check column 6
+	OUTI  KPDO,0xfb     ; check column 6
 	WAIT_MS  KPD_DELAY
 	in    w,KPDI
 	and    w,mask
@@ -149,7 +150,7 @@ col6:
 
 col5:
 	WAIT_MS  KPD_DELAY
-	OUTI  KPDO,0xdf     ; check column 5
+	OUTI  KPDO,0xfd     ; check column 5
 	WAIT_MS  KPD_DELAY
 	in    w,KPDI
 	and    w,mask
@@ -161,7 +162,7 @@ col5:
 
 col4:
 	WAIT_MS  KPD_DELAY
-	OUTI  KPDO,0xef     ; check column 4
+	OUTI  KPDO,0xfe     ; check column 4
 	WAIT_MS  KPD_DELAY
 	in    w,KPDI
 	and    w,mask
@@ -176,12 +177,12 @@ col4:
   rjmp  isr_return
 
 isr_return:
-	INVP  PORTB,0    ; visual feedback of key pressed acknowledge
+	;INVP  PORTB,0    ; visual feedback of key pressed acknowledge
 	ldi    _w,10    ; sound feedback of key pressed acknowledge
 
 beep01:   
 	; TO BE COMPLETED AT THIS LOCATION
-	OUTI KPDO, 0x0f
+	OUTI KPDO, 0xf0
 	_LDI  wr2,0xff
 	reti
  
@@ -189,104 +190,17 @@ beep01:
 .include "printf.asm"    ; include formatted printing routines
 .include "eeprom.asm"			;include internal EEPROM routines
 
-;=== Passcode verification ===
-check_code:
-	JB0		r6,6,code1_check	;jump to subroutine for first digit test
-	JB0		r6,5,code2_check	;jump to subroutine for second digit test
-	JB0		r6,4,code3_check	;jump to subroutine for third digit test
-	reti
-code1_check:
-	SET_BIT_1	r6,6
-	push a0						;search in EEPROM the first passcode digit
-	ldi xl, low(code1_adress)
-	ldi xh, high(code1_adress)
-	rcall eeprom_load
-	cp			b0, a0			;check good code 
-	pop a0
-	brne		wrong_code
-	reti
-code2_check:
-	SET_BIT_1	r6,5
-	push a0						;search in EEPROM the second passcode digit
-	ldi xl, low(code2_adress)
-	ldi xh, high(code2_adress)
-	rcall eeprom_load
-	cp			b0, a0			;check good code 
-	pop a0
-	brne		wrong_code
-	reti
-code3_check:
-	SET_BIT_1	r6,4
-	push a0						;search in EEPROM the third passcode digit
-	ldi xl, low(code3_adress)
-	ldi xh, high(code3_adress)
-	rcall eeprom_load
-	cp			b0, a0			;check good code 
-	pop a0
-	brne		wrong_code
-	reti
-wrong_code:
-	SET_BIT_1	r6,3			;set the wrong code bit to 1 if wrong passcode detected
-	reti
-
-;=== Change the passcode in the EEPROM ===
-change_code:
-	JB0			r6,6,code1_change;jump to the subroutine for store first digit in EEPROM
-	JB0			r6,5,code2_change;jump to the subroutine for store second digit in EEPROM
-	JB0			r6,4,code3_change;jump to the subroutine for store third digit in EEPROM
-	reti
-code1_change:
-	SET_BIT_1	r6,6
-	cli
-	push		a0				;store selected value in the selected adress in the EEPROM
-	mov			a0,b0
-	ldi			xl, low(code1_adress)
-	ldi			xh, high(code1_adress)
-	rcall		eeprom_store
-	pop			a0
-	sei
-	reti
-code2_change:
-	SET_BIT_1	r6,5
-	cli
-	push		a0				;store selected value in the selected adress in the EEPROM
-	mov			a0,b0
-	ldi			xl, low(code2_adress)
-	ldi			xh, high(code2_adress)
-	rcall		eeprom_store
-	pop			a0
-	sei
-	reti
-code3_change:
-	SET_BIT_1	r6,4
-	cli
-	push		a0				;store selected value in the selected adress in the EEPROM
-	mov			a0,b0
-	ldi			xl, low(code3_adress)
-	ldi			xh, high(code3_adress)
-	rcall		eeprom_store
-	pop			a0
-	sei
-
-	WAIT_MS 500
-
-	SET_BIT_0 r6,7				;reset all leds indicators when passcode changed
-	SET_BIT_0 r6,6
-	SET_BIT_0 r6,5
-	SET_BIT_0 r6,4
-
-	reti
 ; === initialization and configuration ===
 .org 0x400
 
 reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
 	rcall  LCD_init    ; initialize UART
 
-	OUTI  KPDD,0xf0    ; bit0-3 pull-up and bits4-7 driven low
-	OUTI  KPDO,0x0f    ;>(needs the two lines)
-	OUTI  DDRB,0xff    ; turn off LEDs
-	OUTI  EIMSK,0x0f    ; enable INT0-INT3
-	OUTI  EICRB,0b0    ;>at low level
+	OUTI  KPDD,0x0f    ; bit0-3 pull-up and bits4-7 driven low
+	OUTI  KPDO,0xf0    ;>(needs the two lines)
+	OUTI  DDRB,0xff    ; turn on LEDs
+	OUTI  EIMSK,0xf0    ; enable INT4-INT7
+	OUTI  EICRB,0b00    ;>at low level
 
 	PRINTF LCD
 .db	CR,CR,"Sprinkler Sys"
