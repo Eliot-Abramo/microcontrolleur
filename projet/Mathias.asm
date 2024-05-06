@@ -64,12 +64,21 @@
 	lpm    @2, Z
 .endmacro
 
+.macro SET_BIT_1;reg,bit		;Change selected bit to 1
+	push a0
+	mov a0,@0
+	FB1 a0,@1		
+	mov @0,a0
+	pop a0
+	.endmacro
+
+
  ; === definitions ===
 .equ  KPDD = DDRD
 .equ  KPDO = PORTD
 .equ  KPDI = PIND
 
-.equ  KPD_DELAY = 30  ; msec, debouncing keys of keypad
+.equ  KPD_DELAY = 30   ; msec, debouncing keys of keypad
 
 .def  wr0 = r2         ; detected row in hex
 .def  wr1 = r1         ; detected column in hex
@@ -112,60 +121,59 @@ isr_ext_int3:
 	rjmp  column_detect
 
 column_detect:
-	OUTI  KPDO,0xff  ; bit4-7 driven high
+	OUTI  KPDO,0xff    ; bit4-7 driven high
 
 col7:
 	WAIT_MS  KPD_DELAY
-	OUTI  KPDO,0x7f  ; check column 7
+	OUTI  KPDO,0x7f    ; check column 7
 	WAIT_MS  KPD_DELAY
 	in    w,KPDI
 	and    w,mask
 	tst    w
 	brne  col6
 	_LDI  wr1,0x03
-	INVP  PORTB,7    ;;debug
+	INVP  PORTB,7       ;;debug
 	rjmp  isr_return
   
 col6:
 	WAIT_MS  KPD_DELAY
-	OUTI  KPDO,0xbf  ; check column 6
+	OUTI  KPDO,0xbf     ; check column 6
 	WAIT_MS  KPD_DELAY
 	in    w,KPDI
 	and    w,mask
 	tst    w
 	brne  col5
 	_LDI  wr1,0x02
-	INVP  PORTB,6    ;;debug
+	INVP  PORTB,6       ;;debug
 	rjmp  isr_return
 
 col5:
 	WAIT_MS  KPD_DELAY
-	OUTI  KPDO,0xdf  ; check column 5
+	OUTI  KPDO,0xdf     ; check column 5
 	WAIT_MS  KPD_DELAY
 	in    w,KPDI
 	and    w,mask
 	tst    w
 	brne  col4
 	_LDI  wr1,0x01
-	INVP  PORTB,5    ;;debug
+	INVP  PORTB,5       ;;debug
 	rjmp  isr_return
 
 col4:
 	WAIT_MS  KPD_DELAY
-	OUTI  KPDO,0xef  ; check column 4
+	OUTI  KPDO,0xef     ; check column 4
 	WAIT_MS  KPD_DELAY
 	in    w,KPDI
 	and    w,mask
 	tst    w
 	brne  err_row0
 	_LDI  wr1,0x00
-	INVP  PORTB,4  ;;debug
+	INVP  PORTB,4       ;;debug
 	rjmp  isr_return
   
   err_row0:      ; debug purpose and filter residual glitches    
   ;INVP  PORTB,0
   rjmp  isr_return
-  ; no reti (grouped in isr_return)
 
 isr_return:
 	INVP  PORTB,0    ; visual feedback of key pressed acknowledge
@@ -179,7 +187,95 @@ beep01:
  
 .include "lcd.asm"      ; include UART routines
 .include "printf.asm"    ; include formatted printing routines
+.include "eeprom.asm"			;include internal EEPROM routines
 
+;=== Passcode verification ===
+check_code:
+	JB0		r6,6,code1_check	;jump to subroutine for first digit test
+	JB0		r6,5,code2_check	;jump to subroutine for second digit test
+	JB0		r6,4,code3_check	;jump to subroutine for third digit test
+	reti
+code1_check:
+	SET_BIT_1	r6,6
+	push a0						;search in EEPROM the first passcode digit
+	ldi xl, low(code1_adress)
+	ldi xh, high(code1_adress)
+	rcall eeprom_load
+	cp			b0, a0			;check good code 
+	pop a0
+	brne		wrong_code
+	reti
+code2_check:
+	SET_BIT_1	r6,5
+	push a0						;search in EEPROM the second passcode digit
+	ldi xl, low(code2_adress)
+	ldi xh, high(code2_adress)
+	rcall eeprom_load
+	cp			b0, a0			;check good code 
+	pop a0
+	brne		wrong_code
+	reti
+code3_check:
+	SET_BIT_1	r6,4
+	push a0						;search in EEPROM the third passcode digit
+	ldi xl, low(code3_adress)
+	ldi xh, high(code3_adress)
+	rcall eeprom_load
+	cp			b0, a0			;check good code 
+	pop a0
+	brne		wrong_code
+	reti
+wrong_code:
+	SET_BIT_1	r6,3			;set the wrong code bit to 1 if wrong passcode detected
+	reti
+
+;=== Change the passcode in the EEPROM ===
+change_code:
+	JB0			r6,6,code1_change;jump to the subroutine for store first digit in EEPROM
+	JB0			r6,5,code2_change;jump to the subroutine for store second digit in EEPROM
+	JB0			r6,4,code3_change;jump to the subroutine for store third digit in EEPROM
+	reti
+code1_change:
+	SET_BIT_1	r6,6
+	cli
+	push		a0				;store selected value in the selected adress in the EEPROM
+	mov			a0,b0
+	ldi			xl, low(code1_adress)
+	ldi			xh, high(code1_adress)
+	rcall		eeprom_store
+	pop			a0
+	sei
+	reti
+code2_change:
+	SET_BIT_1	r6,5
+	cli
+	push		a0				;store selected value in the selected adress in the EEPROM
+	mov			a0,b0
+	ldi			xl, low(code2_adress)
+	ldi			xh, high(code2_adress)
+	rcall		eeprom_store
+	pop			a0
+	sei
+	reti
+code3_change:
+	SET_BIT_1	r6,4
+	cli
+	push		a0				;store selected value in the selected adress in the EEPROM
+	mov			a0,b0
+	ldi			xl, low(code3_adress)
+	ldi			xh, high(code3_adress)
+	rcall		eeprom_store
+	pop			a0
+	sei
+
+	WAIT_MS 500
+
+	SET_BIT_0 r6,7				;reset all leds indicators when passcode changed
+	SET_BIT_0 r6,6
+	SET_BIT_0 r6,5
+	SET_BIT_0 r6,4
+
+	reti
 ; === initialization and configuration ===
 .org 0x400
 

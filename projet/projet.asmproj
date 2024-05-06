@@ -64,9 +64,6 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AsmFile1.asm">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="definitions.asm">
       <SubType>Code</SubType>
     </Compile>
