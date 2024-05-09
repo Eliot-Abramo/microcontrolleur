@@ -16,19 +16,23 @@
 ; ====== macros ======
 .macro VERIFY_ENTER
 	_CPI @1,0x03
-	brne PC+6
+	brne temp
 	INVP DDRD, 0x02
 	_CPI @0,0x00
-	brne PC+3
+	breq volker
 	INVP DDRD, 0x03
+	rjmp display_code
+volker:	
 	rjmp verify_code
-	rjmp display_code
+	
+temp:
 	_CPI @0,0x03
-	brne PC+4
+	brne fin
 	_CPI @1,0x01
-	breq PC+2
+	breq fin
 	rjmp display_code
-	INVP DDRD, 0x04
+
+fin:
 	nop
 .endmacro
 
@@ -231,6 +235,9 @@ beep01:
 	reti
 
 read_temp :
+	_CPI state,0x00
+	breq PC+2
+	reti
 	push a0
 	rcall	wire1_reset			; send a reset pulse
 	CA	wire1_write, skipROM	; skip ROM identification
@@ -314,6 +321,7 @@ main:
 
 temp:
 	rcall LCD_clear
+
 	PRINTF	LCD
 	.db FF,CR, "ENTER: ",0
 	_LDI    a0, 0x23
@@ -332,15 +340,37 @@ display_code:
 	CHECK_AND_SET a0, a1, a2, a3
 
 	PRINTF LCD
-	.db CR, LF, "Code in: ",FSTR, a
-	.db  0
+	.db CR, LF, "Code in: ",FSTR, a,0
+	
 
 	rjmp display_code
 	
 verify_code:
+	INVP DDRD,0x05
+	_LDI b0, 0x31
+	_LDI b1, 0x32
+	_LDI b2, 0x33
+	_LDI b3, 0x34
+  ; Compare the values with the other registers
+    cp    b0, a0
+    rjmp  main
+    cp    b1, a1
+    rjmp  main
+    cp    b2, a2
+    rjmp  main
+    cp    b3, a3
+    rjmp  main
+	rcall LCD_clear
+
+menu_system:
+	INVP DDRD,0x06
+	WAIT_MS 100
+	PRINTF LCD
+	.db CR, LF, "Correct Code"
+	.db  0
 	nop
 	_LDI state,0x00
-	rjmp main
+	rjmp menu_system
 
  ; === look up table ===
 KeySet01:

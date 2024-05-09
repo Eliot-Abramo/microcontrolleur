@@ -15,7 +15,7 @@
     <Name>projet</Name>
     <RootNamespace>projet</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
-    <EntryFile>$(MSBuildProjectDirectory)\AsmFile1.asm</EntryFile>
+    <EntryFile>$(MSBuildProjectDirectory)\PROJJ.asm</EntryFile>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
@@ -78,6 +78,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AsmFile1.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AsmFile2.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AsmFile3.asm">
