@@ -1,7 +1,7 @@
 /*
- * test_eeprom3.asm
+ * test_eeprom.asm
  *
- *  Created: 08/05/2024 18:35:39
+ *  Created: 08/05/2024 16:14:09
  *   Author: eliot
  */ 
 .include "macros.asm"		
@@ -12,52 +12,40 @@
 
 .def	address = r18
 .def	i = r19
-.def	table = r20
 
 reset:
-    ; Set up the stack pointer
-    LDSP	RAMEND	
-
-    rcall  LCD_init    ; initialize UART
-
-    PRINTF LCD
-    .db	CR,CR,"Sprinkler Sys"
-
-    ; Initialize the I2C
-    call    i2c_init
-
-    clr     b0
-    clr     b1
-    clr     b2
-    clr     b3
-
-	clr zl
-	clr zh
+	LDSP	RAMEND				; set up stack pointer (SP)
+	OUTI	DDRB,0xff			; configure portB to output
+	OUTI	PORTB,0xff			; turn off LEDs
+	
+	in	r16, SFIOR				; disable internal pull-up devices
+	ori	r16, (1<<PUD)
+	out	SFIOR, r16
+	rcall	i2c_init			; initialize I2C	
+	
+	rcall  LCD_init    ; initialize UART
+	PRINTF LCD
+	.db	CR,CR,"Sprinkler Sys"
 
     rjmp    main
 
 .include "i2cx.asm"
 
-main:
+ main:
     ; Write the values of the registers to the EEPROM
     ldi		address, 0x00		; Start at address 0x00
     ldi		i, 0
 
-    ; Lookup table for register values
-    ldi     table_low, low(2*table)
-	ldi     table_high, high(2*table)
-	movw    Z, table_low
-
-table:
-    .dw     b0, b1, b2, b3
-
 write_loop:
     ; Load the value of the next register
-    lpm     a0, Z+
-    call    write_value
-    inc     i
-    cpi     i, 4
-    brne    write_loop
+    mov		a0, b0
+    call	write_value
+    mov		a0, b1
+    call	write_value
+    mov		a0, b2
+    call	write_value
+    mov		a0, b3
+    call	write_value
 
 write_value:
     call	i2c_start			; Start the I2C communication
@@ -66,17 +54,18 @@ write_value:
     inc		address				; Increment the address
     ret
 
-    ; Read the values of the registers from the EEPROM
-    ldi		address, 0x00		; Start at address 0x00
-    ldi		i, 0
-
 read_loop:
-    ; Load the address of the next register
-    lpm     a0, Z+
-    call    read_value
-    inc     i
-    cpi     i, 4
-    brne    read_loop
+    ldi     address, 0x00
+    ; Prepare the address to read from
+    mov		a0, address
+    call	read_value
+    mov		b0, a0
+    call	read_value
+    mov		b1, a0
+    call	read_value
+    mov		b2, a0
+    call	read_value
+    mov		b3, a0
 
 read_value:
     ; Start the I2C communication
@@ -90,8 +79,9 @@ read_value:
     inc		address
     ret
 
-	PRINTF LCD
+print:
+    PRINTF LCD
 	.db CR, LF, "Code in: ",b, FSTR
 	.db  0
 
-    rjmp	main
+	rjmp main

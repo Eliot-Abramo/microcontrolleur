@@ -12,7 +12,6 @@
 
 .def	address = r18
 .def	i = r19
-.def	table = r20
 
 reset:
     ; Set up the stack pointer
@@ -44,9 +43,8 @@ main:
     ldi		i, 0
 
     ; Lookup table for register values
-    ldi     table_low, low(2*table)
-	ldi     table_high, high(2*table)
-	movw    Z, table_low
+	ldi    ZL, low(2*(table))
+	ldi    ZH, high(2*(table))
 
 table:
     .dw     b0, b1, b2, b3
