@@ -10,6 +10,7 @@ reset:
 	OUTI	DDRA,0xff		; configure portB to output
 	rcall	LCD_init		; initialize the LCD
 	
+
 ;	OUTI	ADCSR,(1<<ADEN)+6; AD Enable, PS=CK/64	
 ;	OUTI	ADMUX,POT		; select channel with potentiometer POT	
 	jmp	main			; jump ahead to the main program

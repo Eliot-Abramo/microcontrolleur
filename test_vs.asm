@@ -1,97 +1,119 @@
-/*
- * test_eeprom3.asm
- *
- *  Created: 08/05/2024 18:35:39
- *   Author: eliot
- */ 
-.include "macros.asm"		
 .include "definitions.asm"
+.include "macros.asm"
 
-.include "printf.asm"
-.include "lcd.asm"
+.equ initial_temp = 0x17 ; replace with actual value
+.equ base_speed = 0x64 ; replace with actual value
+.equ E = 0x64 ; replace with actual value
 
-.def	address = r18
-.def	i = r19
-.def	table = r20
+; Variables
+.def temperature = r12
+.def result = r19
+.def i = r20
+.def factorial = r21
+.def interm = r23
+.def interm2 = r24
+.def interm3 = r25
+.def x_val = r4
+;speed=base_speed + (temp - initial_temp)k
+;k = exp(-E/(R*temp)) = exp(-x)
 
-reset:
-    ; Set up the stack pointer
-    LDSP	RAMEND	
+; === initialization and configuration ===
+reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
+	clr interm
+	clr interm2
+	clr interm3
+	rjmp calculation_speed
 
-    rcall  LCD_init    ; initialize UART
+.include "math.asm"
 
-    PRINTF LCD
-    .db	CR,CR,"Sprinkler Sys"
+calculation_speed:
+    _LDI temperature, 0x1E ; replace with actual temperature
 
-    ; Initialize the I2C
-    call    i2c_init
+    ; Calculate k = exp(E/(R*temp)) = exp(x)
+    _LDI x_val, E
+	;temperature = R*temperature
+;	ldi interm, R
+;	mov a0, temperature
+;	mov b0, interm
+;	call mul44
+;	mov temperature, c0
+;	mul temperature, interm
+	;x = x/temperature
+	mov a0, x_val
+    mov b0, temperature
+    call div11
+    mov x_val, c0	
+	;x = -x
+;    neg x_val
+    ;result = exp(x)
+	nop
+	nop
+	rcall exp_cal
 
-    clr     b0
-    clr     b1
-    clr     b2
-    clr     b3
+	clr interm
+	clr interm2
+	clr interm3
 
-	clr zl
-	clr zh
+    ; Calculate speed = base_speed + (temp - initial_temp)*k
+    ;interm = initial_temp
+	ldi interm, initial_temp
+	ldi interm2, base_speed
+    ;temperature = temperature - initial_temp
+	sub temperature, interm
+	;temperature = temperature*k
+	mov a0, temperature
+	mov b0, result
+	call mul44
+	mov temperature, c0
+	;temperature = temperature + base_speed
+    add temperature, interm2
 
-    rjmp    main
+exp_cal:
+    ldi result, 0x01
+	ldi i, 0x02
+	ldi factorial, 0x02
 
-.include "i2cx.asm"
+	add result, x_val
+    ; Calculate e^x using Taylor series
+	; 1 + x + x^2/2 + x^3/6 + x^4/24
+exp_loop:
+    ; Calculate x^i
+	mov interm, x_val
+	mov interm2, x_val
+    clr interm3
+	rcall pow_loop
 
-main:
-    ; Write the values of the registers to the EEPROM
-    ldi		address, 0x00		; Start at address 0x00
-    ldi		i, 0
+    ; Calculate interm = interm / factorial!
+	mov a0, interm
+	mov b0, factorial
+	call div11
+    ;mov interm3, c0
+    ; result = result + interm3
+    add result, c0
+    ; Update i and factorial
+    inc i
 
-    ; Lookup table for register values
-    ldi     table_low, low(2*table)
-	ldi     table_high, high(2*table)
-	movw    Z, table_low
+	mov a0, factorial
+	mov b0, i
+	call mul44
+	mov factorial, c0
+;    mul factorial, i
+    ; Repeat for 4 terms
+    cpi i, 4
+    brne exp_loop
+	ret
 
-table:
-    .dw     b0, b1, b2, b3
+pow_loop:
+	;mov interm, interm3
 
-write_loop:
-    ; Load the value of the next register
-    lpm     a0, Z+
-    call    write_value
-    inc     i
-    cpi     i, 4
-    brne    write_loop
+	mov a0, interm
+	mov b0, interm2
+	call mul44
+	mov interm, c0
+;	mul interm3, interm
 
-write_value:
-    call	i2c_start			; Start the I2C communication
-    call	i2c_write			; Write the value to the EEPROM
-    call	i2c_stop			; Stop the I2C communication
-    inc		address				; Increment the address
-    ret
-
-    ; Read the values of the registers from the EEPROM
-    ldi		address, 0x00		; Start at address 0x00
-    ldi		i, 0
-
-read_loop:
-    ; Load the address of the next register
-    lpm     a0, Z+
-    call    read_value
-    inc     i
-    cpi     i, 4
-    brne    read_loop
-
-read_value:
-    ; Start the I2C communication
-    call	i2c_start
-    call	i2c_write
-    ; Read the value from the EEPROM
-    call	i2c_read
-    ; Stop the I2C communication
-    call	i2c_stop
-    ; Increment the address
-    inc		address
-    ret
-
-	PRINTF LCD
-	.db CR, LF, "Code in: ",b, FSTR
-	.db  0
-
-    rjmp	main
+    inc interm3
+	inc interm3
+    cp interm3, i ; compare i and interm2
+    brlt pow_loop ; if i != interm2, repeat loop
+	ret
