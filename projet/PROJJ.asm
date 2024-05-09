@@ -19,21 +19,24 @@
 	brne temp
 	INVP DDRD, 0x02
 	_CPI @0,0x01
-	breq volker
+	breq verif
 	INVP DDRD, 0x06
-	rjmp display_code
-volker:	
-	INVP DDRD,0x01
-	rjmp verify_code
+	ldi @2,0x02
+	jmp fin
+verif:	
+	ldi @2,0x01
+	jmp fin
 	
 temp:
 	INVP DDRD, 0x07
 	_CPI @0,0x03
-	brne fin
+	brne okay
 	_CPI @1,0x01
-	breq fin
-	rjmp display_code
-
+	breq okay
+	ldi @2,0x02
+	jmp fin
+okay:
+	ldi @2,0x00
 fin:
 	nop
 .endmacro
@@ -316,13 +319,17 @@ main:
 	clr    chg
 	mov a0,temp0
 	mov a1,temp1
+
+
+	nop
+
 	PRINTF	LCD
 	.db	LF,"Curr Temp=",FFRAC2+FSIGN,a,4,$22,"C ",0
 	rjmp main
 
 temp:
 	rcall LCD_clear
-
+	clr    count
 	PRINTF	LCD
 	.db FF,CR, "ENTER: ",0
 	_LDI    a0, 0x23
@@ -335,8 +342,14 @@ display_code:
 	tst    wr2        ; check flag/semaphore
 	breq   display_code
 	clr    wr2
-	VERIFY_ENTER wr0,wr1  ;check if BCD*# dont count,if A,verify code,otherwise ok
-		
+	VERIFY_ENTER wr0,wr1,interm  ;check if BCD*# dont count,if A,verify code,otherwise ok
+									;interm=0 ok, interm=1 verify code, interm=2 dont count
+	cpi interm,0x01	
+	brne PC+2
+	jmp verify_code
+	cpi interm,0x02
+	breq display_code
+
 	DECODE_ASCII wr0, wr1, interm
 	CHECK_AND_SET a0, a1, a2, a3
 
@@ -349,7 +362,7 @@ display_code:
 verify_code:
 	rcall LCD_clear
 	PRINTF LCD
-	.db CR, CR, "Code verification...",0
+	.db CR, CR, "verification...",0
 
 	INVP DDRD,0x05
 
@@ -381,13 +394,11 @@ verify_code:
     ;rjmp  main
 
 correct_code:
-	INVP DDRD,0x06
-	WAIT_MS 100
+	nop
 	PRINTF LCD
 	.db CR, LF, "Correct Code"
 	.db  0
 	nop
-	_LDI state,0x00
 	rjmp menu
 
 wrong_code:
@@ -403,7 +414,28 @@ wrong_code:
 
 
 menu:
+	WAIT_MS 1000
+	rcall  LCD_clear
+menu1:
+	WAIT_MS 100
+	PRINTF LCD
+	.db	FF,CR,"A=CHANGE CODE",0
+	nop
+	PRINTF LCD
+	.db	LF,"B=CHANGE TEMP",0
+	;tst    wr2        ; check flag/semaphore
+	;breq   menu 1
+	;clr    wr2
+	;DECODE_ASCII wr0, wr1, interm
+	;cpi interm,0x41
+	;breq change_code
+	;cpi interm,0x42
+	;breq change_temp
+	rjmp menu1
+
+;change_temp:
 	
+
 
  ; === look up table ===
 KeySet01:
