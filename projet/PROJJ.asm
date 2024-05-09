@@ -18,14 +18,16 @@
 	_CPI @1,0x03
 	brne temp
 	INVP DDRD, 0x02
-	_CPI @0,0x00
+	_CPI @0,0x01
 	breq volker
-	INVP DDRD, 0x03
+	INVP DDRD, 0x06
 	rjmp display_code
 volker:	
+	INVP DDRD,0x01
 	rjmp verify_code
 	
 temp:
+	INVP DDRD, 0x07
 	_CPI @0,0x03
 	brne fin
 	_CPI @1,0x01
@@ -280,7 +282,6 @@ reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
 	OUTI  DDRD,0xff			;led second visualiton
 	PRINTF LCD
 	.db	FF,CR,"Sprinkler Sys",0
-
 	_LDI    a0, 0x23
 	_LDI    a1, 0x23
 	_LDI    a2, 0x23
@@ -299,7 +300,7 @@ reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
 
   ; === main program ===
 main:
-	out DDRD,state
+	;out DDRD,state
 	_CPI state,0x00
 	breq display_temp
 	_CPI state,0x01
@@ -340,29 +341,46 @@ display_code:
 	CHECK_AND_SET a0, a1, a2, a3
 
 	PRINTF LCD
-	.db CR, LF, "Code in: ",FSTR, a,0
+	.db LF, "Code in: ",FSTR, a,0
 	
 
 	rjmp display_code
 	
 verify_code:
-	INVP DDRD,0x05
-	_LDI b0, 0x31
-	_LDI b1, 0x32
-	_LDI b2, 0x33
-	_LDI b3, 0x34
-  ; Compare the values with the other registers
-    cp    b0, a0
-    rjmp  main
-    cp    b1, a1
-    rjmp  main
-    cp    b2, a2
-    rjmp  main
-    cp    b3, a3
-    rjmp  main
 	rcall LCD_clear
+	PRINTF LCD
+	.db CR, CR, "Code verification...",0
 
-menu_system:
+	INVP DDRD,0x05
+
+	_CPI a0,0x31
+	breq PC+2
+	rjmp wrong_code
+	_CPI a1,0x32
+	breq PC+2
+	rjmp wrong_code
+	_CPI a2,0x33
+	breq PC+2
+	rjmp wrong_code
+	_CPI a3,0x34
+	breq PC+2
+	rjmp wrong_code
+	nop
+	;_LDI b0, 0x31
+	;_LDI b1, 0x32
+	;_LDI b2, 0x33
+	;_LDI b3, 0x34
+  ; Compare the values with the other registers
+    ;cp    b0, a3
+    ;rjmp  main
+    ;cp    b1, a2
+    ;rjmp  main
+    ;cp    b2, a1
+    ;rjmp  main
+    ;cp    b3, a0
+    ;rjmp  main
+
+correct_code:
 	INVP DDRD,0x06
 	WAIT_MS 100
 	PRINTF LCD
@@ -370,7 +388,22 @@ menu_system:
 	.db  0
 	nop
 	_LDI state,0x00
-	rjmp menu_system
+	rjmp menu
+
+wrong_code:
+	PRINTF LCD
+	.db LF, "Wrong code PD",0
+	_LDI state,0x00
+
+	WAIT_MS 1000
+	rcall  LCD_clear
+	PRINTF LCD
+	.db	FF,CR,"Sprinkler Sys",0
+	rjmp main
+
+
+menu:
+	
 
  ; === look up table ===
 KeySet01:
