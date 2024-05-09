@@ -1,3 +1,5 @@
+
+
 ; file:	definitions.asm   target ATmega128L-4MHz-STK300
 ; purpose library, definition of addresses and constants
 ; 20171114 A.S.
