@@ -7,10 +7,10 @@
     Mathias Rainaldi - SCIPER 364154
 
     Project description:
-	!!!! A l'aide !!!!
+	Sprinkler System
 */
 
-.include "macros.asm"    ; include macro definitions
+.include "macros.asm"		; include macro definitions
 .include "definitions.asm"  ; include register/constant definitions
 
 ; ====== macros ======
@@ -42,34 +42,34 @@ fin:
 .endmacro
 
 .macro CHECK_AND_SET
-    cpi		count, 0x00		; compare a3 with 0x23
-    breq	set_a0			; if equal, branch to set_a3
-    cpi		count, 0x01		; compare a2 with 0x23
-    breq	set_a1			; if equal, branch to set_a2
-    cpi		count, 0x02		; compare a1 with 0x23
-    breq	set_a2			; if equal, branch to set_a1
-    cpi		count, 0x03		; compare a0 with 0x23
-    breq	set_a3			; if equal, branch to set_a0
-    rjmp	set_a0     		; jump to end
+    cpi		count, 0x00				; compare a3 with 0x23 ('#' ASCII code)
+    breq	set_a0					; if equal, branch to set_a0
+    cpi		count, 0x01				; compare a2 with 0x23
+    breq	set_a1					; if equal, branch to set_a1
+    cpi		count, 0x02				; compare a1 with 0x23
+    breq	set_a2					; if equal, branch to set_a2
+    cpi		count, 0x03				; compare a0 with 0x23
+    breq	set_a3					; if equal, branch to set_a3
+    rjmp	set_a0     				; jump to end
 
 	set_a0:
 		ldi count,0x01
-		mov		@0, interm		; set a3 to interm
-		rjmp	end				; jump to end
+		mov		@0, interm			; set a3 to interm
+		rjmp	end					; jump to end
 
 	set_a1:
 		ldi count,0x02
-		mov		@1, interm		; set a2 to interm
-		rjmp	end				; jump to end
+		mov		@1, interm			; set a2 to interm
+		rjmp	end					; jump to end
 
 	set_a2:
 		ldi count,0x03
-		mov		@2, interm		; set a1 to interm
-		rjmp	end				; jump to end
+		mov		@2, interm			; set a1 to interm
+		rjmp	end					; jump to end
 
 	set_a3:
 		ldi count,0x00
-		mov		@3, interm		; set a0 to interm
+		mov		@3, interm			; set a0 to interm
 
 	end:
 		nop
@@ -80,10 +80,6 @@ fin:
 	; @0 = wr0 = r2 = row = low bit
 	clr    Zl
 	clr    ZH
-	;clr    @2
-
-	;add    interm, @1
-	;add    interm, @0
 
 	ldi    ZL, low(2*(KeySet01))
 	ldi    ZH, high(2*(KeySet01))
@@ -92,101 +88,90 @@ fin:
 	add    ZL, wr0
 	add    ZL, wr0
 	add    ZL, wr1
-	;lpm    @2, Z
+
 	lpm interm,Z
 
 .endmacro
-
-.macro SET_BIT_1;reg,bit		;Change selected bit to 1
-	push a0
-	mov a0,@0
-	FB1 a0,@1		
-	mov @0,a0
-	pop a0
-	.endmacro
-
 
  ; === definitions ===
 .equ  KPDD = DDRE
 .equ  KPDO = PORTE
 .equ  KPDI = PINE
 
-.equ  KPD_DELAY = 30   ; msec, debouncing keys of keypad
+.equ  KPD_DELAY = 30				; msec, debouncing keys of keypad
 
-.def  wr0 = r2         ; detected row in hex
-.def  wr1 = r1         ; detected column in hex
-.def  mask = r14       ; row mask indicating which row has been detected in bin
-.def  wr2 = r15        ; semaphore: must enter LCD display routine, unary: 0 or other
-.def interm = r16      ; intermediate register used in calculations
-.def state = r6
-.def temp0 = r8        ;temperature0
-.def temp1= r9		   ;temperature1
-.def chg= r26		   ;relaod temperature
-.def count=r27		   ;for know at which character
+.def	wr0 = r2					; detected row in hex
+.def	wr1 = r1					; detected column in hex
+.def	mask = r14					; row mask indicating which row has been detected in bin
+.def	wr2 = r15					; semaphore: must enter LCD display routine, unary: 0 or other
+.def	interm = r16				; intermediate register used in calculations
+.def	state = r6
+.def	temp0 = r8					; temperature0
+.def	temp1 = r9					; temperature1
+.def	chg = r26					; reload temperature
+.def	count = r27					; for know at which character
+
 ; === interrupt vector table ===
 .org 0
 	jmp reset
+
 .org 10
-	jmp isr_ext_int0   ; external interrupt INT4
-	jmp isr_ext_int1   ; external interrupt INT5
-	jmp isr_ext_int2   ; external interrupt INT6
-	jmp isr_ext_int3   ; external interrupt INT7
+	jmp isr_ext_int0				; external interrupt INT4
+	jmp isr_ext_int1				; external interrupt INT5
+	jmp isr_ext_int2				; external interrupt INT6
+	jmp isr_ext_int3				; external interrupt INT7
+
 .org	OVF0addr
-	INVP	PORTA,7				; timer check temp			
 	rjmp read_temp
 
 
 
 ; === interrupt service routines ===
-retour:		;if note mode put code
+retour:								;if note mode put code
 	WAIT_MS 300
 	_LDI state,0x01
 	reti
+
 isr_ext_int0:
 	_CPI state,0x00
 	breq retour
-	INVP  PORTA,0x00     ;;debug
-	_LDI  wr0, 0x00    ; detect row 1
+	_LDI  wr0, 0x00					; detect row 1
 	_LDI  mask, 0b00010000
 	rjmp  column_detect
 
 isr_ext_int1:
 	_CPI state,0x00
 	breq retour
-	INVP  PORTA,0x01
-	_LDI  wr0, 0x01    ; detect row 2
+	_LDI  wr0, 0x01					; detect row 2
 	_LDI  mask, 0b00100000
 	rjmp  column_detect
 
 isr_ext_int2:
 	_CPI state,0x00
 	breq retour
-	INVP  PORTA,0x02
-	_LDI  wr0, 0x02    ; detect row 3
+	_LDI  wr0, 0x02					; detect row 3
 	_LDI  mask, 0b01000000
 	rjmp  column_detect
 
 isr_ext_int3:
 	_CPI state,0x00
 	breq retour
-	INVP  PORTA,0x03
-	_LDI  wr0, 0x03    ; detect row 4
+	_LDI  wr0, 0x03					; detect row 4
 	_LDI  mask, 0b10000000
 	rjmp  column_detect
 
 column_detect:
-	OUTI  KPDO,0xff    ; bit4-7 driven high
+	OUTI  KPDO,0xff					; bit4-7 driven high
 
 col7:
 	WAIT_MS  KPD_DELAY
-	OUTI  KPDO,0xf7    ; check column 7
+	OUTI  KPDO,0xf7					; check column 7
 	WAIT_MS  KPD_DELAY
 	in    w,KPDI
 	and    w,mask
 	tst    w
 	brne  col6
 	_LDI  wr1,0x03
-	INVP  PORTA,7       ;;debug
 	rjmp  isr_return
   
 col6:
@@ -198,7 +183,6 @@ col6:
 	tst    w
 	brne  col5
 	_LDI  wr1,0x02
-	INVP  PORTA,6       ;;debug
 	rjmp  isr_return
 
 col5:
@@ -210,7 +194,6 @@ col5:
 	tst    w
 	brne  col4
 	_LDI  wr1,0x01
-	INVP  PORTA,5       ;;debug
 	rjmp  isr_return
 
 col4:
@@ -222,7 +205,6 @@ col4:
 	tst    w
 	brne  err_row0
 	_LDI  wr1,0x00
-	INVP  PORTA,4       ;;debug
 	rjmp  isr_return
   
   err_row0:      ; debug purpose and filter residual glitches    
@@ -271,37 +253,45 @@ read_temp :
 .org 0x400
 
 reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
-	rcall  LCD_init    ; initialize UART
+	;=== initialize the protocols ===
+	rcall	LCD_init			; initialize UART
 	rcall	wire1_init			; initialize 1-wire(R) interface
-	rcall	lcd_init			; initialize LCD
-	OUTI  KPDD,0x0f    ; bit0-3 pull-up and bits4-7 driven low
-	OUTI  KPDO,0xf0    ;>(needs the two lines)
-	OUTI  DDRA,0xff    ; turn on LEDs
-	OUTI  EIMSK,0xf0    ; enable INT4-INT7
-	OUTI  EICRB,0b00    ;>at low level
-	OUTI  TIMSK,(1<<TOIE0)	; timer0 overflow interrupt enable
+	
+	;=== configure output pins ===
+	OUTI	DDRA,0xff			; configure portA to output
+	OUTI	DDRD,0xff			; configure portA to output
+
+	;=== configure keypad pins ===
+	OUTI	KPDD,0x0f			; bit0-3 pull-up and bits4-7 driven low
+	OUTI	KPDO,0xf0			; >(needs the two lines)
+
+	;=== configure interrupts ===
+	OUTI  EIMSK,0xf0			; enable INT4-INT7
+	OUTI  EICRB,0b00			; >at low level
+
+	;=== configure timer ===
+	OUTI  TIMSK,(1<<TOIE0)		; timer0 overflow interrupt enable
 	OUTI  ASSR, (1<<AS0)		; clock from TOSC1 (external)
-	OUTI  TCCR0,6	; CS0=1 CK
-	OUTI  DDRD,0xff			;led second visualiton
+	OUTI  TCCR0,6				; CS0=1 CK
+
 	PRINTF LCD
 	.db	FF,CR,"Sprinkler Sys",0
-	_LDI    a0, 0x23
+
+	;=== clear registers ===
+	CLR8 count, wr0, wr1, wr2, chg, b1, b2, b3
+
+	;=== set default values ===
+	_LDI    a0, 0x23			;sets the a registers to # for display purposes
 	_LDI    a1, 0x23
 	_LDI    a2, 0x23
 	_LDI    a3, 0x23
-	clr    count
-	clr    wr0
-	clr    wr1
-	clr    wr2
-	clr	chg
-	clr    b1
-	clr    b2
-	clr    b3
-	_LDI state,0x00
-	sei
-	jmp  main        ; not useful in this case, kept for modularity
 
-  ; === main program ===
+	_LDI state,0x00
+	
+	sei							; set interrupt enable, allows the microcontroller to respond to interrupt requests.
+
+
+ ; === main program ===
 main:
 	;out DDRD,state
 	_CPI state,0x00
@@ -310,8 +300,6 @@ main:
 	breq temp
 	rjmp main
 
-
- 
  ; === sous routine ===
  display_temp:
  	tst    chg        ; check flag/semaphore
@@ -319,7 +307,6 @@ main:
 	clr    chg
 	mov a0,temp0
 	mov a1,temp1
-
 
 	nop
 
@@ -379,19 +366,6 @@ verify_code:
 	breq PC+2
 	rjmp wrong_code
 	nop
-	;_LDI b0, 0x31
-	;_LDI b1, 0x32
-	;_LDI b2, 0x33
-	;_LDI b3, 0x34
-  ; Compare the values with the other registers
-    ;cp    b0, a3
-    ;rjmp  main
-    ;cp    b1, a2
-    ;rjmp  main
-    ;cp    b2, a1
-    ;rjmp  main
-    ;cp    b3, a0
-    ;rjmp  main
 
 correct_code:
 	nop
@@ -411,7 +385,6 @@ wrong_code:
 	PRINTF LCD
 	.db	FF,CR,"Sprinkler Sys",0
 	rjmp main
-
 
 menu:
 	WAIT_MS 1000
