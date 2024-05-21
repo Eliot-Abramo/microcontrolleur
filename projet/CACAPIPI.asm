@@ -121,7 +121,9 @@ fin:
 ; === interrupt vector table ===
 .dseg
 .org 0x0100
-temp_alarm: .byte 2
+temp_seuil: .byte 2
+code : .byte 4
+
 .cseg
 .org 0
 	jmp reset
@@ -135,8 +137,9 @@ temp_alarm: .byte 2
 .org	OVF0addr
 	rjmp read_temp
 
-
-
+.org	OVF2addr		; timer overflow 2 interrupt vector
+	rjmp	overflow2
+.org	0x30
 ; === interrupt service routines ===
 retour:								;if note mode put code
 	WAIT_MS 500
@@ -237,12 +240,12 @@ read_temp :
 	breq PC+2
 	reti
 	push a0
+	push a1
 
 	rcall	wire1_reset			; send a reset pulse
 	CA	wire1_write, skipROM	; skip ROM identification
 	CA	wire1_write, convertT	; initiate temp conversion
 	WAIT_MS	750					; wait 750 msec
-	rcall	encoder_init
 	rcall	lcd_home			; place cursor to home position
 	rcall	wire1_reset			; send a reset pulse
 	CA	wire1_write, skipROM
@@ -253,9 +256,21 @@ read_temp :
 	mov	temp1,a0
 	mov	temp0,c0
 	ldi chg,0xff
+								; now we compare with the temperature seuil
+	ldi xl,low(temp_seuil)
+	ldi xh,high(temp_seuil)
+	ld a0,x+
+	ld a1,x
+	CP2 temp1,temp0,a1,a0
+	pop a1
 	pop a0
+	brlo PC+2
+	_LDI state,0x02
 	reti
 
+overflow2 :
+	INVP DDRD,SPEAKER
+	reti	
 
  
 .include "lcd.asm"      ; include UART routines
@@ -270,7 +285,7 @@ reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
 	;=== initialize the protocols ===
 	rcall	LCD_init			; initialize UART
 	rcall	wire1_init			; initialize 1-wire(R) interface
-	
+	rcall	encoder_init
 	;=== configure output pins ===
 	OUTI	DDRA,0xff			; configure portA to output
 	OUTI	DDRD,0xff			; configure portA to output
@@ -287,6 +302,7 @@ reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
 	OUTI  TIMSK,(1<<TOIE0)		; timer0 overflow interrupt enable
 	OUTI  ASSR, (1<<AS0)		; clock from TOSC1 (external)
 	OUTI  TCCR0,6				; CS0=1 CK
+	OUTI  TCCR2,2				; prescaler for the buzzer
 	PRINTF LCD
 	.db	FF,CR,"Sprinkler Sys",0
 
@@ -296,11 +312,24 @@ reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
 	;=== set temperature limit ===
 	_LDI a0,0xe0				;corresponds to 30 degree celcius
 	_LDI a1,0x01
-	ldi xl,low(temp_alarm)
-	ldi xh,high(temp_alarm)
+	ldi xl,low(temp_seuil)
+	ldi xh,high(temp_seuil)
 	st x,a0
 	inc xl
 	st x,a1
+
+	;=== set initial code ===
+	_LDI    a0, 0x31			
+	_LDI    a1, 0x32
+	_LDI    a2, 0x33
+	_LDI    a3, 0x34
+	ldi     xl,low(code)
+	ldi     xh,high(code)
+	st      x+,a0
+	st      x+,a1
+	st      x+,a2
+	st      x,a3
+
 	;=== set default values ===
 	_LDI    a0, 0x23			;sets the a registers to # for display purposes
 	_LDI    a1, 0x23
@@ -320,6 +349,9 @@ main:
 	_CPI state,0x01
 	brne PC+2
 	rjmp temp
+	_CPI state,0x02
+	brne PC+2
+	rjmp alarm
 	rjmp main
 
  ; === sous routine ===
@@ -361,46 +393,84 @@ display_code:
 	CHECK_AND_SET a0, a1, a2, a3
 
 	PRINTF LCD
-	.db LF, "Code in: ",FSTR, a,0
+	.db LF, "Code in:    ",FSTR, a,0
 	
 
 	rjmp display_code
+
+alarm : 
+	OUTI  TIMSK,(1<<TOIE2)
+	rjmp temp
+
+stop_alarm :
+	WAIT_MS 1000
+	rcall LCD_clear
+	PRINTF LCD
+	.db	FF,CR,"Sprinkler Sys",0
+	OUTI  TIMSK,(1<<TOIE0)
+	_LDI state,0x00
+	rjmp main
 	
 verify_code:
 	rcall LCD_clear
 	PRINTF LCD
 	.db CR, CR, "verification...",0
-
+	WAIT_MS 1000
 	INVP DDRD,0x05
+	push c0
+	push c1
+	push c2
+	push c3
+	ldi xl,low(code)
+	ldi xh,high(code)
+	ld c0,x+
+	ld c1,x+
+	ld c2,x+
+	ld c3,x
 
-	_CPI a0,0x31
+	cp a0,c0
 	breq PC+2
 	rjmp wrong_code
-	_CPI a1,0x32
+	cp a1,c1
 	breq PC+2
 	rjmp wrong_code
-	_CPI a2,0x33
+	cp a2,c2
 	breq PC+2
 	rjmp wrong_code
-	_CPI a3,0x34
+	cp a3,c3
 	breq PC+2
 	rjmp wrong_code
 	nop
+	pop c3
+	pop c2
+	pop c1
+	pop c0
+
 
 correct_code:
 	nop
 	PRINTF LCD
 	.db CR, LF, "Correct Code"
 	.db  0
+	_CPI state,0x02
+	brne PC+2
+	rjmp stop_alarm
+
 	rjmp menu
 
 
 wrong_code:
+	pop c3
+	pop c2
+	pop c1
+	pop c0
 	PRINTF LCD
 	.db LF, "Wrong code PD",0
-	_LDI state,0x00
-
 	WAIT_MS 1000
+	_CPI state,0x02
+	brne PC+2
+	rjmp temp
+	_LDI state,0x00
 	rcall  LCD_clear
 	PRINTF LCD
 	.db	FF,CR,"Sprinkler Sys",0
@@ -415,20 +485,21 @@ menu1:
 	.db	FF,CR,"A=CHANGE CODE",0
 	nop
 	PRINTF LCD
-	.db	LF,"B=CHANGE TEMP",0
+	.db	LF,"B=CHANGE TEMP   ",0
 	tst    wr2        ; check flag/semaphore
 	breq   menu1
 	clr    wr2
 	DECODE_ASCII wr0, wr1, interm
-	;cpi interm,0x41
-	;breq change_code
+	cpi interm,0x41
+	brne PC+2
+	rjmp change_code
 	cpi interm,0x42
 	breq change_temp
 	rjmp menu1
 
 change_temp:
-	ldi xl,low(temp_alarm)
-	ldi xh,high(temp_alarm)
+	ldi xl,low(temp_seuil)
+	ldi xh,high(temp_seuil)
 	ld a0,x+
 	ld a1,x
 	rcall	LCD_clear
@@ -447,10 +518,9 @@ change_temp1:
 	breq set_new_temp
 	rjmp	change_temp1
 
-
 set_new_temp :
-	ldi xl,low(temp_alarm)
-	ldi xh,high(temp_alarm)
+	ldi xl,low(temp_seuil)
+	ldi xh,high(temp_seuil)
 	st x+,a0
 	st x,a1
 	rcall  LCD_clear
@@ -463,6 +533,61 @@ set_new_temp :
 	PRINTF LCD
 	.db	FF,CR,"Sprinkler Sys",0
 	rjmp main
+
+change_code :
+	rcall LCD_clear
+	PRINTF	LCD
+	.db	FF,CR,"WRITE NEW CODE:",0
+	clr count
+	ldi xl,low(code)
+	ldi xh,high(code)
+	ld a0,x+
+	ld a1,x+
+	ld a2,x+
+	ld a3,x
+change_code_1:
+	WAIT_MS	1
+	PRINTF LCD 
+	.db LF, "NEW CODE:   ",FSTR, a,0
+	tst    wr2        ; check flag/semaphore
+	breq   change_code_1
+	clr    wr2
+	VERIFY_ENTER wr0,wr1,interm  ;check if BCD*# dont count,if A,verify code,otherwise ok
+							;interm=0 ok, interm=1 set code, interm=2 dont count
+	cpi interm,0x01	
+	brne PC+2
+	jmp set_new_code
+	cpi interm,0x02
+	brne PC+2
+	rjmp change_code_1
+	DECODE_ASCII wr0, wr1, interm
+	CHECK_AND_SET a0, a1, a2, a3
+	rjmp change_code_1
+
+
+
+
+set_new_code :
+	ldi xl,low(code)
+	ldi xh,high(code)
+	st x+,a0
+	st x+,a1
+	st x+,a2
+	st x,a3
+	rcall  LCD_clear
+	PRINTF LCD
+	.db LF, "NEW CODE SET",0
+	_LDI state,0x00
+
+	WAIT_MS 1000
+	rcall  LCD_clear
+	PRINTF LCD
+	.db	FF,CR,"Sprinkler Sys",0
+	rjmp main
+
+
+	
+
 
 
  ; === look up table ===
