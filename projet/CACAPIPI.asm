@@ -1,4 +1,11 @@
 /*
+ * AsmFile1.asm
+ *
+ *  Created: 21.05.2024 00:15:15
+ *   Author: mathi
+ */ 
+
+ /*
     EPFL - EE-208: Microcontrôleurs et Systèmes Numériques
     Semester Project - Spring Semester 2024
 
@@ -127,13 +134,12 @@ temp_alarm: .byte 2
 
 .org	OVF0addr
 	rjmp read_temp
-.org	OVF2addr		; timer overflow 2 interrupt vector
-	rjmp	overflow2
 
-.org	0x30
+
+
 ; === interrupt service routines ===
 retour:								;if note mode put code
-	;WAIT_MS 300
+	WAIT_MS 500
 	_LDI state,0x01
 	reti
 
@@ -231,7 +237,7 @@ read_temp :
 	breq PC+2
 	reti
 	push a0
-	push a1
+
 	rcall	wire1_reset			; send a reset pulse
 	CA	wire1_write, skipROM	; skip ROM identification
 	CA	wire1_write, convertT	; initiate temp conversion
@@ -247,23 +253,10 @@ read_temp :
 	mov	temp1,a0
 	mov	temp0,c0
 	ldi chg,0xff
-compare_temp :
-	ldi xl,low(temp_alarm)
-	ldi xh,high(temp_alarm)
-	ld a0,x+
-	ld a1,x
-	
-	CP2 temp1,temp0,a1,a0
-	pop a1
 	pop a0
-	brlo PC+3
-	_LDI state,0x02
-	reti
 	reti
 
-overflow2:
-	INVP	PORTD,SPEAKER		; invert PB5
-	reti
+
  
 .include "lcd.asm"      ; include UART routines
 .include "printf.asm"    ; include formatted printing routines
@@ -294,7 +287,6 @@ reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
 	OUTI  TIMSK,(1<<TOIE0)		; timer0 overflow interrupt enable
 	OUTI  ASSR, (1<<AS0)		; clock from TOSC1 (external)
 	OUTI  TCCR0,6				; CS0=1 CK
-	OUTI  TCCR2,2
 	PRINTF LCD
 	.db	FF,CR,"Sprinkler Sys",0
 
@@ -302,7 +294,7 @@ reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
 	CLR8 count, wr0, wr1, wr2, chg, b1, b2, b3
 
 	;=== set temperature limit ===
-	_LDI a0,0xe0
+	_LDI a0,0xe0				;corresponds to 30 degree celcius
 	_LDI a1,0x01
 	ldi xl,low(temp_alarm)
 	ldi xh,high(temp_alarm)
@@ -328,21 +320,10 @@ main:
 	_CPI state,0x01
 	brne PC+2
 	rjmp temp
-	_CPI state,0x02
-	breq alarm
 	rjmp main
 
  ; === sous routine ===
- alarm :
-	rcall LCD_clear
-	PRINTF LCD
-	.db	FF,CR,"Sprinkler Sys",0
-	PRINTF	LCD
-	.db	LF,"ALARM...",0
-	sei
-	OUTI  TIMSK,(1<<TOIE0)+(1<<TOIE2)
-	WAIT_MS 1000
-	rjmp display_code
+
 
  display_temp:
  	tst    chg        ; check flag/semaphore
@@ -411,16 +392,8 @@ correct_code:
 	PRINTF LCD
 	.db CR, LF, "Correct Code"
 	.db  0
-	_CPI state,0x02
-	breq PC+2
 	rjmp menu
-	OUTI  TIMSK,(1<<TOIE0)
-	_LDI state,0x00
-	WAIT_MS 1000
-	rcall  LCD_clear
-	PRINTF LCD
-	.db	FF,CR,"Sprinkler Sys",0
-	rjmp main
+
 
 wrong_code:
 	PRINTF LCD
