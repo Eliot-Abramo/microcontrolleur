@@ -266,6 +266,18 @@ div11:	mov	c0,a0		; load a into shift register
 	com	c0				; invert the bits
 	ret
 
+div21:	MOV2	c1,c0, a1,a0	; c will contain the result
+	clr	d0						; d will contain the remainder
+	ldi	w,16					; load bit counter
+_d21:	ROL3	d0,c1,c0		; shift carry into result c
+	sub	d0,b0					; subtract b from remainder
+	brcc	PC+2			
+	add	d0,b0					; restore if remainder became negative
+	DJNZ	w,_d21				; Decrement and Jump if bit-count Not Zero
+	ROL2	c1,c0				; last shift (carry into result c)
+	COM2	c1,c0				; complement result
+	ret
+
 .macro	D22
 	rol	c0
 	rol	c1
@@ -297,4 +309,28 @@ div22:	MOV2	c1,c0, a1,a0 ; load a into shift register
 	D22
 	ROL2	c1,c0			; last shift
 	COM2	c1,c0			; invert the bits
+	ret
+
+div31:	MOV3	c2,c1,c0, a2,a1,a0	; c will contain the result
+	clr	d0						; d will contain the remainder
+	ldi	w,24					; load bit counter
+_d31:	ROL4	d0,c2,c1,c0		; shift carry into result c
+	sub	d0, b0					; subtract b from remainder
+	brcc	PC+2	
+	add	d0, b0					; restore if remainder became negative
+	DJNZ	w,_d31				; Decrement and Jump if bit-count Not Zero
+	ROL3	c2,c1,c0			; last shift (carry into result c)
+	COM3	c2,c1,c0			; complement result
+	ret
+
+div32:	MOV3	c2,c1,c0, a2,a1,a0	; c will contain the result
+	CLR2	d1,d0				; d will contain the remainder
+	ldi	w,24					; load bit counter
+_d32:	ROL5	d1,d0,c2,c1,c0	; shift carry into result c
+	SUB2	d1,d0, b1,b0		; subtract b from remainder
+	brcc	PC+3	
+	ADD2	d1,d0, b1,b0		; restore if remainder became negative
+	DJNZ	w,_d32				; Decrement and Jump if bit-count Not Zero
+	ROL3	c2,c1,c0			; last shift (carry into result c)
+	COM3	c2,c1,c0			; complement result
 	ret

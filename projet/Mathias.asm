@@ -42,6 +42,12 @@ fin:
 .endmacro
 
 .macro CHECK_AND_SET
+	; @3 = a3 = fourth bit of code
+	; @2 = a2 = third bit of code
+	; @1 = a1 = second bit of code
+	; @0 = a0 = first bit of code
+
+	lpm		interm, Z
     cpi		count, 0x00				; compare a3 with 0x23 ('#' ASCII code)
     breq	set_a0					; if equal, branch to set_a0
     cpi		count, 0x01				; compare a2 with 0x23
@@ -53,44 +59,40 @@ fin:
     rjmp	set_a0     				; jump to end
 
 	set_a0:
-		ldi count,0x01
+		ldi		count,0x01
 		mov		@0, interm			; set a3 to interm
 		rjmp	end					; jump to end
 
 	set_a1:
-		ldi count,0x02
+		ldi		count,0x02
 		mov		@1, interm			; set a2 to interm
 		rjmp	end					; jump to end
 
 	set_a2:
-		ldi count,0x03
+		ldi		count,0x03
 		mov		@2, interm			; set a1 to interm
 		rjmp	end					; jump to end
 
 	set_a3:
-		ldi count,0x00
+		ldi		count,0x00
 		mov		@3, interm			; set a0 to interm
 
 	end:
 		nop
 .endmacro
 
+;changed this macro to include the @0,@1
 .macro DECODE_ASCII
 	; @1 = wr1 = r1 = column = high bit
 	; @0 = wr0 = r2 = row = low bit
-	clr    Zl
-	clr    ZH
-
 	ldi    ZL, low(2*(KeySet01))
 	ldi    ZH, high(2*(KeySet01))
-	add    ZL, wr0
-	add    ZL, wr0
-	add    ZL, wr0
-	add    ZL, wr0
-	add    ZL, wr1
-
-	lpm interm,Z
-
+	add    ZL, @0
+	add    ZL, @0
+	add    ZL, @0
+	add    ZL, @0
+	add    ZL, @1
+;	lpm interm,Z
 .endmacro
 
 .macro ROW_MACRO
@@ -149,8 +151,6 @@ fin:
 
 .org	OVF0addr
 	rjmp read_temp
-
-
 
 ; === interrupt service routines ===
 retour:								;if note mode put code
@@ -325,11 +325,11 @@ display_code:
 	cpi interm,0x02
 	breq display_code
 
-	DECODE_ASCII wr0, wr1, interm
+	DECODE_ASCII wr0, wr1
 	CHECK_AND_SET a0, a1, a2, a3
 
 	PRINTF LCD
-	.db LF, "Code in: ",FSTR, a,0
+	.db LF, "Code in: ",FSTR, a
 	
 
 	rjmp display_code
@@ -358,14 +358,14 @@ verify_code:
 correct_code:
 	nop
 	PRINTF LCD
-	.db CR, LF, "Correct Code"
+	.db CR, LF, "Correct Code "
 	.db  0
 	nop
 	rjmp menu
 
 wrong_code:
 	PRINTF LCD
-	.db LF, "Wrong code PD",0
+	.db LF, "Wrong code PD"
 	_LDI state,0x00
 
 	WAIT_MS 1000
@@ -383,7 +383,7 @@ menu1:
 	.db	FF,CR,"A=CHANGE CODE",0
 	nop
 	PRINTF LCD
-	.db	LF,"B=CHANGE TEMP",0
+	.db	LF,"B=CHANGE TEMP"
 
 	rjmp menu1
 

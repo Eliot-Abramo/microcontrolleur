@@ -1,7 +1,10 @@
-/*.equ initial_temp = 0x17 ; replace with actual value
+.include "definitions.asm"
+.include "macros.asm"
+
+.equ initial_temp = 0x17 ; replace with actual value
 .equ base_speed = 0x64 ; replace with actual value
 .equ E = 0x64 ; replace with actual value
-*/
+
 ; Variables
 .def temperature = r12
 .def result = r19
@@ -15,35 +18,15 @@
 ;k = exp(-E/(R*temp)) = exp(-x)
 
 ; === initialization and configuration ===
-intialize_cal_speed:  
-	in _sreg, SREG
-	push a0
-	push a1
-	push a2
-	push a3
-
-	push b0
-	push b1
-	push b2
-	push b3
-
-	push c0
-	push c1
-	push c2
-	push c3
-
-	push d0
-	push d1
-	push d2
-	push d3
-
-	push e0
-	push e1
-
-calculation_speed:
+reset:  LDSP  RAMEND    ; Load Stack Pointer (SP)
 	clr interm
 	clr interm2
 	clr interm3
+	rjmp calculation_speed
+
+.include "math.asm"
+
+calculation_speed:
     _LDI temperature, 0x1E ; replace with actual temperature
 
     ; Calculate k = exp(E/(R*temp)) = exp(x)
@@ -84,32 +67,6 @@ calculation_speed:
 	mov temperature, c0
 	;temperature = temperature + base_speed
     add temperature, interm2
-
-pop_back:
-	pop e1
-	pop e0
-
-	pop d3
-	pop d2
-	pop d1
-	pop d0
-
-	pop c3
-	pop c2
-	pop c1
-	pop c0
-
-	pop b3
-	pop b2
-	pop b1
-	pop b0
-
-	pop a3
-	pop a2
-	pop a1
-	pop a0
-	out SREG, _sreg
-ret
 
 exp_cal:
     ldi result, 0x01

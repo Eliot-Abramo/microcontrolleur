@@ -17,12 +17,15 @@
 .macro VERIFY_ENTER
 	_CPI @1,0x03
 	brne temp
+
 	INVP DDRD, 0x02
 	_CPI @0,0x01
 	breq verif
+	
 	INVP DDRD, 0x06
 	ldi @2,0x02
 	jmp fin
+
 verif:	
 	ldi @2,0x01
 	jmp fin
@@ -123,8 +126,6 @@ fin:
 
 .org	OVF0addr
 	rjmp read_temp
-
-
 
 ; === interrupt service routines ===
 retour:								;if note mode put code
