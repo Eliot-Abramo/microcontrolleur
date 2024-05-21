@@ -414,7 +414,7 @@ display_code:
 
 alarm : 
 	OUTI  TIMSK,(1<<TOIE2)
-	rjmp temp
+	rjmp state_1
 
 stop_alarm :
 	WAIT_MS 1000
@@ -485,7 +485,7 @@ wrong_code:
 	WAIT_MS 1000
 	_CPI state,0x02
 	brne PC+2
-	rjmp temp
+	rjmp state_1
 	_LDI state,0x00
 	rcall  LCD_clear
 	PRINTF LCD
@@ -577,7 +577,7 @@ change_code_1:
 	brne PC+2
 	rjmp change_code_1
 	DECODE_ASCII wr0, wr1, interm
-	CHECK_AND_SET a0, a1, a2, a3
+	CHECK_AND_SET a0, a1, a2, a3, interm, count
 	rjmp change_code_1
 
 
