@@ -538,13 +538,15 @@ change_code :
 	rcall LCD_clear
 	PRINTF	LCD
 	.db	FF,CR,"WRITE NEW CODE:",0
-	clr count
+	
 	ldi xl,low(code)
 	ldi xh,high(code)
 	ld a0,x+
 	ld a1,x+
 	ld a2,x+
 	ld a3,x
+	WAIT_MS 500
+	ldi count,0x00
 change_code_1:
 	WAIT_MS	1
 	PRINTF LCD 
