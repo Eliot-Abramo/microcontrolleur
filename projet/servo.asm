@@ -7,7 +7,7 @@
 
 reset:
 	LDSP	RAMEND			; set up stack pointer (SP)
-	OUTI	DDRA,0xff		; configure portB to output
+	OUTI	DDRC,0xff		; configure portB to output
 	rcall	LCD_init		; initialize the LCD
 	
 
@@ -30,16 +30,15 @@ Fast
 	wat 200, a0=ff, a1=ff
 */
 
-main:	P0	PORTB,SERVO1	; pin=4
+main:	
 	WAIT_US	200
 	ldi	a0,0xff				; read low byte first
-	ldi	a1,0xef				; read high byte second
-	ADDI2	a1,a0,1000		; add an offset of 1000
+	ldi	a1,0xff				; read high byte second
+	ADDI2	a1,a0,100		; add an offset of 1000
 	
 	PRINTF	LCD				; print formatted
 .db	"pulse=",FDEC2,a,"usec    ",CR,0
 	
-	P1	PORTB,SERVO1		; pin=4
 loop:
 	SUBI2	a1,a0,0x1
 	brne	loop

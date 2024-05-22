@@ -1,4 +1,10 @@
-; file	servo36218.asm   target ATmega128L-4MHz-STK300
+/*
+ * AsmFile3.asm
+ *
+ *  Created: 22/05/2024 20:54:23
+ *   Author: eliot
+ */ 
+ ; file	servo36218.asm   target ATmega128L-4MHz-STK300
 ; purpose 360-servo motor control as a classical 180-servo
 ; with increased angle capability
 ; module: M4, P7 servo Futaba S3003, output port: PORTB
@@ -9,44 +15,30 @@
 reset:
 	LDSP	RAMEND			; set up stack pointer (SP)
 	
-	in	zl,low(MCUCR)
-	in	zh,high(MCUCR)
-	STSZ  0xDDDD
-	clr zl
-	clr zh
+	in	_w, MCUCR
+	sts 0xDDDD, _w
+	clr _w
 
 	rcall	LCD_init			; initialize UART
 	OUTI	DDRC,0xff		; configure portB to output
-	
+	rcall			LCD_clear
+	WAIT_MS 10000
 	rjmp	main			; jump to the main program
 
 .include "lcd.asm"		; include UART routines
 .include "printf.asm"	; include formatted printing routines
 
 main:
-	ldi _w, 0x0f
+	ldi _w, 0xf0
 
 	PRINTF LCD
 	.db	FF,CR,"Servo activated",0
 	
-	push zl
-	push zh
-
-	in zl, low(MCUCR)
-	in zh, high(MCUCR)
-	STSZ 0xEEFF
-	clr zl
-	clr zh
-
-	lds zl, low(0xDDDD)
-	lds zh, high(0xDDDD)
-	out	MCUCR,zl
-	out MCUCR+1,zh
-
-	clr zl
-	clr zh
-	pop zh
-	pop zl
+	push _w
+	lds _w, 0xDDDD
+	out	MCUCR,_w
+	clr _w
+	pop _w
 
 loop:
 	tst _w
@@ -60,33 +52,8 @@ loop:
 	rjmp loop
 
 end:
-	push zl
-	push zh
-	clr zl
-	clr zh
-
-	lds zl, low(0xEEFF)
-	lds zh, high(0xEEFF)
-	out	MCUCR,zl
-	out MCUCR+1,zh
-	
-	pop zh
-	pop zl
-
-	nop
-	nop
-	rcall			LCD_clear
-	nop
-	nop
-
-please:
-	nop
-	WAIT_MS 100
-	PRINTF LCD
-	.db	FF,CR,"T'as mere fdp",0
-	nop
-rjmp please
-
+	WAIT_MS 10000
+	jmp reset
 /*
 ; main -----------------
 main:

@@ -7,7 +7,7 @@
     Mathias Rainaldi - SCIPER 364154
 
     Project description:
-	Sprinkler System
+	Sprinkler System with user interface
 */
 
 .include "macros.asm"		; include macro definitions
@@ -16,6 +16,8 @@
 ; ====== macros ======
 ;	VERIFY_ENTER wr0,wr1,interm  ;check if BCD*# dont count,if A,verify code,otherwise ok
 									;interm=0 ok, interm=1 verify code, interm=2 dont count
+
+; add encoder macros here
 
 .macro VERIFY_ENTER
 	; @2 = interm = intermediate register used to temporary store values
@@ -31,11 +33,11 @@
 	breq verif
 
 	ldi @2,0x02
-	rjmp fin
+	jmp fin
 
 verif:	
 	ldi @2,0x01
-	rjmp fin
+	jmp fin
 	
 not_letter:
 	;check if not last ligne
@@ -45,10 +47,8 @@ not_letter:
 	;check if 0
 	_CPI @1,0x01
 	breq okay
-	
-	;
 	ldi @2,0x02
-	rjmp fin
+	jmp fin
 
 okay:
 	ldi @2,0x00
@@ -78,21 +78,17 @@ fin:
 		ldi		@5, 0x01
 		mov		@0, @4				; set a3 to interm
 		rjmp	end					; jump to end
-
 	set_a1:
 		ldi		@5, 0x02
 		mov		@1, @4				; set a2 to interm
 		rjmp	end					; jump to end
-
 	set_a2:
 		ldi		@5, 0x03
 		mov		@2, @4			; set a1 to interm
 		rjmp	end					; jump to end
-
 	set_a3:
 		ldi		@5, 0x00
 		mov		@3, @4			; set a0 to interm
-
 	end:
 		nop
 .endmacro
@@ -101,7 +97,7 @@ fin:
 	; @2 = interm = intermediate 'temporary' register used in calculations
 	; @1 = wr1 = r1 = column = high bit
 	; @0 = wr0 = r2 = row = low bit
-
+	CLR2 ZL, ZH
 	;point Z to ASCII table
 	ldi    ZL, low(2*(KeySet01))
 	ldi    ZH, high(2*(KeySet01))
@@ -113,7 +109,6 @@ fin:
 	add    ZL, @1
 	;load ASCII value to temporary register to be used later
 	lpm		@2,Z
-
 .endmacro
 
 .macro ROW_MACRO
@@ -122,7 +117,6 @@ fin:
 	; @2 = wr0 = row counter
 	; @1 = mask to extract correct row
 	; @0 = row number on keypad (0->3)
-
 	; check if in state_0, if not update the position on keypad
 	_CPI		@4, 0x00
 	brne		not_state_0
@@ -130,10 +124,9 @@ fin:
 	_LDI		@4, 0x01
 	reti
 	
-not_state_0:
-	_LDI		@2, @0
-	_LDI		@3, @1
-
+	not_state_0:
+		_LDI		@2, @0
+		_LDI		@3, @1
 .endmacro
 
  .macro COLUMN_MACRO
@@ -149,7 +142,6 @@ not_state_0:
 	tst			w
 	brne		@1
 	_LDI		wr1,@2
-
  .endmacro
 
 
@@ -195,6 +187,7 @@ not_state_0:
 
 ; === interrupt service routines ===
 .org	0x30
+
 isr_ext_int0: ; detect row 0
 	ROW_MACRO		0x00, 0b00010000, wr0, mask, state
 	rjmp			column_detect
@@ -257,10 +250,11 @@ read_temp: ; temperature sensor interrupt routine
 	CA					wire1_write, readScratchpad	; send address to read value from sensor
 	
 	rcall				wire1_read					; read temperature LSB
-	mov					temp0, a0					; save temperature LSB
+	mov					c0, a0					; save temperature LSB
 	rcall				wire1_read					; read temperature MSB
-	mov					temp1, a0					; save temperature MSB
-	ldi					chg, 0xff					; indicate temperature has changed
+	mov					temp1,a0					; save temperature MSB
+	mov					temp0,c0
+	ldi					chg,0xff					; indicate temperature has changed
 	
 	; now we compare with the temperature seuil
 	ldi					xl, low(temp_seuil)
@@ -278,7 +272,7 @@ read_temp: ; temperature sensor interrupt routine
 
 overflow2 :
 	INVP DDRD,SPEAKER
-	reti	
+	reti
 
 ; === include necessary libraries === 
 .include "lcd.asm"		; include UART routines
@@ -288,10 +282,15 @@ overflow2 :
 .include "encoder.asm"	; include encoder routines
 
 ; === initialization and configuration ===
-.org 0x400
+.org 0x500
 
 reset:  
 	LDSP	RAMEND				; Load Stack Pointer (SP)
+
+	;=== save state of MCU control register ===
+	in		_w, MCUCR
+	sts		0xDDDD, _w
+	clr		_w
 
 	;=== initialize the protocols ===
 	rcall	LCD_init			; initialize UART
@@ -299,7 +298,7 @@ reset:
 	rcall	encoder_init		; initialize encoder interface
 
 	;=== configure output pins ===
-	OUTI	DDRA,0xff			; configure portA to output
+	OUTI	DDRC,0xff			; configure portC to output
 	OUTI	DDRD,0xff			; configure portD to output
 	sbi		DDRD,SPEAKER		; set bit speaker is connected to 1
 
@@ -365,6 +364,7 @@ main:
 	brne	PC+2
 	rjmp	alarm
 
+	nop
 	rjmp	main
 
 ; === sub-routines ===
@@ -375,15 +375,15 @@ state_0:
 	mov		a0, temp0	; update temperature values
 	mov		a1,	temp1
 	
-	PRINTF	LCD			; Update LCD display
+	PRINTF	LCD
 	.db	LF,"Curr Temp=",FFRAC2+FSIGN,a,4,$22,"C ",0
 	rjmp main
 
 state_1:
 	rcall			LCD_clear		; clear LCD
 	clr				count
-	PRINTF			LCD				; update LCD
-	.db				FF,CR, "ENTER: ",0
+	PRINTF	LCD
+	.db FF,CR, "ENTER: ",0
 
 	_LDI			a0, 0x23		; reset a values to # for display
 	_LDI			a1, 0x23		; purposes
@@ -400,6 +400,7 @@ display_code:
 	cpi				interm, 0x01	
 	brne			PC+2
 	jmp				verify_code
+
 	cpi				interm,0x02
 	breq			display_code
 
@@ -407,10 +408,9 @@ display_code:
 	CHECK_AND_SET	a0, a1, a2, a3, interm, count
 
 	PRINTF LCD
-	.db LF, "Code in: ",FSTR, a,0
+	.db LF, "Code in:    ",FSTR, a,0
 	
-
-	rjmp display_code
+	rjmp display_code 
 
 alarm : 
 	OUTI  TIMSK,(1<<TOIE2)
@@ -423,20 +423,46 @@ stop_alarm :
 	.db	FF,CR,"Sprinkler Sys",0
 	OUTI  TIMSK,(1<<TOIE0)
 	_LDI state,0x00
-	rjmp main
 
+servo_routine:
+	ldi _w, 0xf0
+	rcall LCD_clear
+	PRINTF LCD
+	.db	FF,CR,"Servo activated",0
 	
+	push interm
+	clr interm
+	lds interm, 0xDDDD
+	out MCUCR, interm
+	pop interm
+
+loop:
+	tst _w
+	breq end
+	dec _w
+	P0 PORTC,SERVO1 ; pin=4
+	WAIT_US 1900000
+ 
+	P1 PORTC,SERVO1  ; pin=400
+	WAIT_US 100000
+	rjmp loop
+
+end:
+	jmp reset
+
+
+
 verify_code:
 	rcall LCD_clear
 	PRINTF LCD
 	.db CR, CR, "verification...",0
 	WAIT_MS 1000
-	INVP DDRD,0x05
 
 	push c0
 	push c1
 	push c2
 	push c3
+
 	ldi xl,low(code)
 	ldi xh,high(code)
 	ld c0,x+
@@ -456,12 +482,12 @@ verify_code:
 	cp a3,c3
 	breq PC+2
 	rjmp wrong_code
+	
 	nop
 	pop c3
 	pop c2
 	pop c1
 	pop c0
-
 
 correct_code:
 	nop
@@ -554,13 +580,16 @@ change_code :
 	rcall LCD_clear
 	PRINTF	LCD
 	.db	FF,CR,"WRITE NEW CODE:",0
-	clr count
+
 	ldi xl,low(code)
 	ldi xh,high(code)
 	ld a0,x+
 	ld a1,x+
 	ld a2,x+
 	ld a3,x
+	WAIT_MS 500
+	ldi count,0x00
+
 change_code_1:
 	WAIT_MS	1
 	PRINTF LCD 
@@ -580,10 +609,7 @@ change_code_1:
 	CHECK_AND_SET a0, a1, a2, a3, interm, count
 	rjmp change_code_1
 
-
-
-
-set_new_code :
+set_new_code:
 	ldi xl,low(code)
 	ldi xh,high(code)
 	st x+,a0
@@ -600,11 +626,6 @@ set_new_code :
 	PRINTF LCD
 	.db	FF,CR,"Sprinkler Sys",0
 	rjmp main
-
-
-	
-
-
 
  ; === look up table ===
 KeySet01:
