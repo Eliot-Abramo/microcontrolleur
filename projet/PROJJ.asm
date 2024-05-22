@@ -9,7 +9,6 @@
     Project description:
 	Sprinkler System with user interface
 */
-
 .include "macros.asm"		; include macro definitions
 .include "definitions.asm"  ; include register/constant definitions
 
@@ -25,33 +24,33 @@
 	; @0 = wr0 = row counter
 
 	;check if value entered not in column 3 (not letter)
-	_CPI @1,0x03
-	brne not_letter
+	_CPI	@1,0x03
+	brne	not_letter
 
 	;check if 
-	_CPI @0,0x01
-	breq verif
+	_CPI	@0,0x01
+	breq	verif
 
-	ldi @2,0x02
-	jmp fin
+	ldi		@2,0x02
+	jmp		fin
 
 verif:	
-	ldi @2,0x01
-	jmp fin
+	ldi		@2,0x01
+	jmp		fin
 	
 not_letter:
 	;check if not last ligne
-	_CPI @0,0x03
-	brne okay
+	_CPI	@0,0x03
+	brne	okay
 
 	;check if 0
-	_CPI @1,0x01
-	breq okay
-	ldi @2,0x02
-	jmp fin
+	_CPI	@1,0x01
+	breq	okay
+	ldi		@2,0x02
+	jmp		fin
 
 okay:
-	ldi @2,0x00
+	ldi		@2,0x00
 
 fin:
 	nop
@@ -118,15 +117,15 @@ fin:
 	; @1 = mask to extract correct row
 	; @0 = row number on keypad (0->3)
 	; check if in state_0, if not update the position on keypad
-	_CPI		@4, 0x00
-	brne		not_state_0
-	WAIT_MS		500
-	_LDI		@4, 0x01
+	_CPI	@4, 0x00
+	brne	not_state_0
+	WAIT_MS	500
+	_LDI	@4, 0x01
 	reti
 	
-	not_state_0:
-		_LDI		@2, @0
-		_LDI		@3, @1
+not_state_0:
+	_LDI	@2, @0
+	_LDI	@3, @1
 .endmacro
 
  .macro COLUMN_MACRO
@@ -137,20 +136,37 @@ fin:
  	WAIT_MS		KPD_DELAY
 	OUTI		KPDO, @0
 	WAIT_MS		KPD_DELAY
-	in			w,KPDI
-	and			w,mask
-	tst			w
-	brne		@1
-	_LDI		wr1,@2
+	in		w,KPDI
+	and		w,mask
+	tst		w
+	brne	@1
+	_LDI	wr1,@2
  .endmacro
 
+.macro EEPROM_CHANGE_CODE
+	;@1 = code address
+	;@0 = code value
+	cli
+	push		a0
+	;store selected value in the selected adress in the EEPROM
+	ldi			a0,@0			;move code into a0
+	ldi			xl, low(@1)
+	ldi			xh, high(@1)
+	rcall		eeprom_store
+	pop			a0
+	sei
+.endmacro
 
 ; === definitions ===
 .equ  KPDD = DDRE
 .equ  KPDO = PORTE
 .equ  KPDI = PINE
-
 .equ  KPD_DELAY = 30				; msec, debouncing keys of keypad
+
+.equ code1_eeprom = 123			;first EEPROM address for passcode
+.equ code2_eeprom = 124			;second EEPROM address for passcode
+.equ code3_eeprom = 125			;third EEPROM address for passcode
+.equ code4_eeprom = 126			;fourth EEPROM address for passcode
 
 .def	wr0 = r2					; detected row in hex
 .def	wr1 = r1					; detected column in hex
@@ -189,23 +205,23 @@ fin:
 .org	0x30
 
 isr_ext_int0: ; detect row 0
-	ROW_MACRO		0x00, 0b00010000, wr0, mask, state
-	rjmp			column_detect
+	ROW_MACRO	0x00, 0b00010000, wr0, mask, state
+	rjmp		column_detect
 
 isr_ext_int1: ; detect row 1
-	ROW_MACRO		0x01, 0b00100000, wr0, mask, state
-	rjmp			column_detect
+	ROW_MACRO	0x01, 0b00100000, wr0, mask, state
+	rjmp		column_detect
 
 isr_ext_int2: ; detect row 2
-	ROW_MACRO		0x02, 0b01000000, wr0, mask, state
-	rjmp			column_detect
+	ROW_MACRO	0x02, 0b01000000, wr0, mask, state
+	rjmp		column_detect
 
 isr_ext_int3: ; detect row 3
-	ROW_MACRO		0x03, 0b10000000, wr0, mask, state
-	rjmp			column_detect
+	ROW_MACRO	0x03, 0b10000000, wr0, mask, state
+	rjmp		column_detect
 
 column_detect:
-	OUTI			KPDO,0xff	; bit4-7 driven high
+	OUTI		KPDO,0xff	; bit4-7 driven high
 
 col7: ; check column 7
 	COLUMN_MACRO	0xf7, col6, 0x03
@@ -224,49 +240,48 @@ col4: ; check column 4
 	rjmp			isr_return
   
 isr_return:
-	ldi				_w,10  ; sound feedback of key pressed acknowledge
+	ldi		_w,10  ; sound feedback of key pressed acknowledge
 
 beep01:   
-	OUTI KPDO,		0xf0
-	_LDI			wr2,0xff
+	OUTI	KPDO,0xf0
+	_LDI	wr2,0xff
 	reti
 
 read_temp: ; temperature sensor interrupt routine
-	_CPI				state,0x00					; check if in first state
-	breq				PC+2
+	_CPI	state,0x00					; check if in first state
+	breq	PC+2
 	reti
+	push	a0							; a0 might change, save on stack in case
+	push	a1
 
-	push				a0							; a0 might change, save on stack in case
-	push				a1
+	rcall	wire1_reset					; send a reset pulse
+	CA		wire1_write, skipROM		; skip ROM identification
+	CA		wire1_write, convertT		; initiate temp conversion
+	WAIT_MS	750							; wait 750 msec
 
-	rcall				wire1_reset					; send a reset pulse
-	CA					wire1_write, skipROM		; skip ROM identification
-	CA					wire1_write, convertT		; initiate temp conversion
-	WAIT_MS				750							; wait 750 msec
-
-	rcall				lcd_home					; place cursor to home position
-	rcall				wire1_reset					; send a reset pulse
-	CA					wire1_write, skipROM	
-	CA					wire1_write, readScratchpad	; send address to read value from sensor
-	
-	rcall				wire1_read					; read temperature LSB
-	mov					c0, a0					; save temperature LSB
-	rcall				wire1_read					; read temperature MSB
-	mov					temp1,a0					; save temperature MSB
-	mov					temp0,c0
-	ldi					chg,0xff					; indicate temperature has changed
+	rcall	lcd_home					; place cursor to home position
+	rcall	wire1_reset					; send a reset pulse
+	CA		wire1_write, skipROM	
+	CA		wire1_write, readScratchpad	; send address to read value from sensor
+	rcall	wire1_read					; read temperature LSB
+	mov		c0, a0
+	mov		temp0,a0
+	rcall	wire1_read					; read temperature MSB
+	mov		temp1,a0					; save temperature MSB
+	mov		temp0,c0
+	ldi		chg,0xff					; indicate temperature has changed
 	
 	; now we compare with the temperature seuil
-	ldi					xl, low(temp_seuil)
-	ldi					xh, high(temp_seuil)
-	ld					a0, x+
-	ld					a1, x
-	CP2					temp1,temp0,a1,a0
+	ldi		xl, low(temp_seuil)
+	ldi		xh, high(temp_seuil)
+	ld		a0, x+
+	ld		a1, x
+	CP2		temp1,temp0,a1,a0
 
-	pop					a1							; restore a1
-	pop					a0							; restore a0
-	brlo				PC+2
-	_LDI				state, 0x02
+	pop		a1							; restore a1
+	pop		a0							; restore a0
+	brlo	PC+2
+	_LDI	state, 0x02
 
 	reti
 
@@ -280,13 +295,18 @@ overflow2 :
 .include "eeprom.asm"	; include internal EEPROM routines
 .include "wire1.asm"	; include one-wire protocol routines
 .include "encoder.asm"	; include encoder routines
+;.include "math_2byte.asm"
 
 ; === initialization and configuration ===
 .org 0x500
-
 reset:  
 	LDSP	RAMEND				; Load Stack Pointer (SP)
+	EEPROM_CHANGE_CODE 0x34, code1_eeprom
+	EEPROM_CHANGE_CODE 0x34, code2_eeprom
+	EEPROM_CHANGE_CODE 0x35, code3_eeprom
+	EEPROM_CHANGE_CODE 0x35, code4_eeprom
 
+reboot:
 	;=== save state of MCU control register ===
 	in		_w, MCUCR
 	sts		0xDDDD, _w
@@ -329,18 +349,59 @@ reset:
 	st x,a1
 
 	;=== set initial code ===
-	_LDI    a0, 0x31			
-	_LDI    a1, 0x32
-	_LDI    a2, 0x33
-	_LDI    a3, 0x34
+;	_LDI    a0, 0x31			
+;	_LDI    a1, 0x32
+;	_LDI    a2, 0x33
+;	_LDI    a3, 0x34
+
+	clr a0
+	ldi xl, low(code1_eeprom)
+	ldi xh, high(code1_eeprom)
+	rcall eeprom_load
+	mov b0, a0
+
+	clr a0
+	ldi xl, low(code2_eeprom)
+	ldi xh, high(code2_eeprom)
+	rcall eeprom_load
+	mov b1, a0
+
+	clr a0
+	ldi xl, low(code3_eeprom)
+	ldi xh, high(code3_eeprom)
+	rcall eeprom_load
+	mov b2, a0
+
+	clr a0
+	ldi xl, low(code4_eeprom)
+	ldi xh, high(code4_eeprom)
+	rcall eeprom_load
+	mov b3, a0
+
+	PRINTF LCD
+	.db LF, "Code in:    ",FSTR, b,0
+	
+	WAIT_MS 10000
+
+	clr a0
+	clr xl
+	clr xh
+
 	ldi     xl,low(code)
 	ldi     xh,high(code)
-	st      x+,a0
-	st      x+,a1
-	st      x+,a2
-	st      x,a3
-
+	st      x+,b0
+	st      x+,b1
+	st      x+,b2
+	st      x,b3
+	
+	clr a0
+	clr a1
+	clr b0
+	clr b1
+	clr b2
+	clr b3
 	;=== set initial values ===
+	rcall LCD_clear
 	PRINTF LCD					; display initial LCD message
 	.db	FF,CR,"Sprinkler Sys",0
 
@@ -350,140 +411,153 @@ reset:
 	_LDI    a3, 0x23
 	_LDI	state, 0x00			; set initial state to 0
 	sei							; enable interrupt
-
-; === main program ===
+	
+;=======================
+; ==== main program ====
+;=======================
 main:
 	_CPI	state,0x00	; check if in state 0
 	breq	state_0
-
 	_CPI	state,0x01	; check if in state 1
 	brne	PC+2
-	rjmp	state_1
-
+	rjmp	state_1 ;rcall, ret?
 	_CPI	state,0x02	; check if in state 2
 	brne	PC+2
 	rjmp	alarm
-
 	nop
 	rjmp	main
 
-; === sub-routines ===
+;=======================
+; ==== sub-routines ====
+;=======================
+/****** Ordered as followed ******
+	-> State 0 - Home Page
+	-> State 1 - Enter Code
+	-> State 2 - Alarm and Servo
+
+	-> Code Verifcation
+	-> Store and Load from EEPROM 
+	-> Menu System
+		-> Temperature sub-menu
+		-> Code sub-menu
+/********************************/
+
+;==== State 0 - Home Page ====
 state_0:
  	tst		chg			; check flag/semaphore
 	breq	main		; if no change, back to main
 	clr		chg
 	mov		a0, temp0	; update temperature values
 	mov		a1,	temp1
-	
-	PRINTF	LCD
-	.db	LF,"Curr Temp=",FFRAC2+FSIGN,a,4,$22,"C ",0
-	rjmp main
 
+	PRINTF	LCD
+.db	LF,"Curr Temp=",FFRAC2+FSIGN,a,4,$22,"C ",0
+	rjmp	main
+
+;==== State 1 - Enter code ====
 state_1:
-	rcall			LCD_clear		; clear LCD
-	clr				count
+	rcall	LCD_clear		; clear LCD
+	clr		count
 	PRINTF	LCD
-	.db FF,CR, "ENTER: ",0
+.db FF,CR, "ENTER: ",0
 
-	_LDI			a0, 0x23		; reset a values to # for display
-	_LDI			a1, 0x23		; purposes
-	_LDI			a2, 0x23
-	_LDI			a3, 0x23
+	_LDI	a0, 0x23		; reset a values to # for display
+	_LDI	a1, 0x23		; purposes
+	_LDI	a2, 0x23
+	_LDI	a3, 0x23
 
 display_code:
-	tst				wr2				; check flag/semaphore
-	breq			display_code	; loop back till not 0
-	clr				wr2
+	tst		wr2				; check flag/semaphore
+	breq	display_code	; loop back till not 0
+	clr		wr2
 
 	VERIFY_ENTER	wr0,wr1,interm  ; check if BCD*# dont count,if A,verify code,otherwise ok
 									; interm=0 ok, interm=1 verify code, interm=2 dont count
-	cpi				interm, 0x01	
-	brne			PC+2
-	jmp				verify_code
+	cpi		interm, 0x01	
+	brne	PC+2
+	jmp		verify_code
 
-	cpi				interm,0x02
-	breq			display_code
+	cpi		interm,0x02
+	breq	display_code
 
 	DECODE_ASCII	wr0, wr1, interm
 	CHECK_AND_SET	a0, a1, a2, a3, interm, count
-
-	PRINTF LCD
-	.db LF, "Code in:    ",FSTR, a,0
+	PRINTF			LCD
+.db LF, "Code in:    ",FSTR, a,0
 	
-	rjmp display_code 
+	rjmp	display_code 
 
-alarm : 
-	OUTI  TIMSK,(1<<TOIE2)
-	rjmp state_1
+;==== State 2 - Alarm and Servo system ====
+alarm: 
+	OUTI	TIMSK,(1<<TOIE2)
+	rjmp	state_1
 
-stop_alarm :
-	WAIT_MS 1000
-	rcall LCD_clear
-	PRINTF LCD
-	.db	FF,CR,"Sprinkler Sys",0
-	OUTI  TIMSK,(1<<TOIE0)
-	_LDI state,0x00
+stop_alarm:
+	WAIT_MS		1000
+	rcall		LCD_clear
+	PRINTF		LCD
+.db	FF,CR,"Sprinkler Sys",0
+	
+	OUTI	TIMSK,(1<<TOIE0)
+	_LDI	state,0x00
 
 servo_routine:
-	ldi _w, 0xf0
-	rcall LCD_clear
-	PRINTF LCD
-	.db	FF,CR,"Servo activated",0
+	ldi		_w, 0xf0
+	rcall	LCD_clear
+	PRINTF	LCD
+.db	FF,CR,"Servo activated",0
 	
-	push interm
-	clr interm
-	lds interm, 0xDDDD
-	out MCUCR, interm
-	pop interm
-
+	clr		interm
+	lds		interm, 0xDDDD
+	out		MCUCR, interm
+	
 loop:
-	tst _w
-	breq end
-	dec _w
-	P0 PORTC,SERVO1 ; pin=4
-	WAIT_US 1900000
+	tst		_w
+	breq	end
+	dec		_w
+	P0		PORTC,SERVO1 ; pin=4
+	WAIT_US	1900000
  
-	P1 PORTC,SERVO1  ; pin=400
-	WAIT_US 100000
-	rjmp loop
+	P1		PORTC,SERVO1  ; pin=400
+	WAIT_US	100000
+	rjmp	loop
 
 end:
-	jmp reset
+	jmp		reboot
 
-
-
+;==== Code verification ====
 verify_code:
-	rcall LCD_clear
-	PRINTF LCD
-	.db CR, CR, "verification...",0
-	WAIT_MS 1000
+	rcall	LCD_clear
+	PRINTF	LCD
+.db CR, CR, "verification...",0
+	WAIT_MS	1000
 
-	push c0
-	push c1
-	push c2
-	push c3
+	push	c0
+	push	c1
+	push	c2
+	push	c3
+	ldi		xl,low(code)
+	ldi		xh,high(code)
+	ld		c0,x+
+	ld		c1,x+
+	ld		c2,x+
+	ld		c3,x
 
-	ldi xl,low(code)
-	ldi xh,high(code)
-	ld c0,x+
-	ld c1,x+
-	ld c2,x+
-	ld c3,x
-
-	cp a0,c0
-	breq PC+2
-	rjmp wrong_code
-	cp a1,c1
-	breq PC+2
-	rjmp wrong_code
-	cp a2,c2
-	breq PC+2
-	rjmp wrong_code
-	cp a3,c3
-	breq PC+2
-	rjmp wrong_code
+	cp		a0,c0
+	breq	PC+2
+	rjmp	wrong_code
+	cp		a1,c1
+	breq	PC+2
+	rjmp	wrong_code
+	cp		a2,c2
+	breq	PC+2
+	rjmp	wrong_code
+	cp		a3,c3
+	breq	PC+2
+	rjmp	wrong_code
 	
 	nop
+
 	pop c3
 	pop c2
 	pop c1
@@ -518,6 +592,9 @@ wrong_code:
 	.db	FF,CR,"Sprinkler Sys",0
 	rjmp main
 
+;==== Store and Load from EEPROM ====
+
+;==== Menu System ====
 menu:
 	WAIT_MS 1000
 	rcall  LCD_clear
@@ -539,6 +616,7 @@ menu1:
 	breq change_temp
 	rjmp menu1
 
+/**** Temperature sub-menu ****/
 change_temp:
 	ldi xl,low(temp_seuil)
 	ldi xh,high(temp_seuil)
@@ -576,6 +654,7 @@ set_new_temp :
 	.db	FF,CR,"Sprinkler Sys",0
 	rjmp main
 
+/**** Change code sub-menu ****/
 change_code :
 	rcall LCD_clear
 	PRINTF	LCD
