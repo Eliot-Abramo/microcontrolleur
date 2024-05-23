@@ -307,7 +307,7 @@ reset:
 	OUTI	DDRC,0xff			; configure portC to output
 	OUTI	DDRD,0xff			; configure portD to output
 	sbi		DDRD,SPEAKER		; set bit speaker is connected to 1
-
+	
 	;=== configure keypad pins ===
 	OUTI	KPDD,0x0f			; bit0-3 pull-up and bits4-7 driven low
 	OUTI	KPDO,0xf0			; >(needs the two lines)
@@ -336,9 +336,9 @@ reset:
 
 	;=== set initial code ===
 	_LDI    a0, 0x31			
-	_LDI    a1, 0x32
-	_LDI    a2, 0x33
-	_LDI    a3, 0x34
+	_LDI    a1, 0x31
+	_LDI    a2, 0x31
+	_LDI    a3, 0x31
 	ldi     xl,low(code)
 	ldi     xh,high(code)
 	st      x+,a0
@@ -435,7 +435,8 @@ servo_routine:
 	rcall LCD_clear
 	PRINTF LCD
 	.db	FF,CR,"Servo activated",0
-	
+	OUTI DDRA, 0x01
+	OUTI PORTA, 0x01
 	push interm
 	clr interm
 	lds interm, 0xDDDD
@@ -554,7 +555,7 @@ change_temp:
 	PRINTF	LCD
 	.db	FF,CR,"Change temp:",0
 change_temp1:					
-	WAIT_MS	1
+	WAIT_MS 20
 	rcall	encoder				; poll encoder
 	PRINTF LCD
 	.db	LF,"Temp=",FFRAC2+FSIGN,a,4,$32,"C ",0
@@ -598,8 +599,6 @@ change_code :
 
 change_code_1:
 	WAIT_MS	1
-	PRINTF LCD 
-	.db LF, "NEW CODE:   ",FSTR, a,0
 	tst    wr2        ; check flag/semaphore
 	breq   change_code_1
 	clr    wr2
@@ -613,6 +612,8 @@ change_code_1:
 	rjmp change_code_1
 	DECODE_ASCII wr0, wr1, interm
 	CHECK_AND_SET a0, a1, a2, a3, interm, count
+	PRINTF LCD 
+	.db LF, "NEW CODE:   ",FSTR, a,0
 	rjmp change_code_1
 
 set_new_code:
