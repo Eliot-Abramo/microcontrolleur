@@ -13,24 +13,17 @@
 .include "definitions.asm"  ; include register/constant definitions
 
 ; ====== macros ======
-;	VERIFY_ENTER wr0,wr1,interm  ;check if BCD*# dont count,if A,verify code,otherwise ok
-									;interm=0 ok, interm=1 verify code, interm=2 dont count
-
-; add encoder macros here
-
 .macro VERIFY_ENTER
+	/* check entry of keypads, deactivates certain keys in certain modes. Check
+		if 'B','C','D','*' or '#' and loads case into interm register. */
 	; @2 = interm = intermediate register used to temporary store values
 	; @1 = wr1 = column counter
 	; @0 = wr0 = row counter
 
-	;check if value entered not in column 3 (not letter)
 	_CPI	@1,0x03
 	brne	not_letter
-
-	;check if 
 	_CPI	@0,0x01
 	breq	verif
-
 	ldi		@2,0x02
 	jmp		fin
 
@@ -39,11 +32,8 @@ verif:
 	jmp		fin
 	
 not_letter:
-	;check if not last ligne
 	_CPI	@0,0x03
 	brne	okay
-
-	;check if 0
 	_CPI	@1,0x01
 	breq	okay
 	ldi		@2,0x02
@@ -97,16 +87,16 @@ fin:
 	; @1 = wr1 = r1 = column = high bit
 	; @0 = wr0 = r2 = row = low bit
 	CLR2 ZL, ZH
-	;point Z to ASCII table
+	; point Z to ASCII table
 	ldi    ZL, low(2*(KeySet01))
 	ldi    ZH, high(2*(KeySet01))
-	;move pointer to value pressed on keypad
+	; move pointer to value pressed on keypad
 	add    ZL, @0
 	add    ZL, @0
 	add    ZL, @0
 	add    ZL, @0
 	add    ZL, @1
-	;load ASCII value to temporary register to be used later
+	; load ASCII value to temporary register to be used later
 	lpm		@2,Z
 .endmacro
 
@@ -133,9 +123,9 @@ not_state_0:
 	; @1 = next column subroutine address
 	; @0 = column identification
 
- 	WAIT_MS		KPD_DELAY
-	OUTI		KPDO, @0
-	WAIT_MS		KPD_DELAY
+ 	WAIT_MS	KPD_DELAY
+	OUTI	KPDO, @0
+	WAIT_MS	KPD_DELAY
 	in		w,KPDI
 	and		w,mask
 	tst		w
@@ -147,37 +137,66 @@ not_state_0:
 	;@1 = code address
 	;@0 = code value
 	cli
-	push		a0
+	push	a0
 	;store selected value in the selected adress in the EEPROM
-	ldi			a0,@0			;move code into a0
-	ldi			xl, low(@1)
-	ldi			xh, high(@1)
-	rcall		eeprom_store
-	pop			a0
+	ldi		a0,@0			;move code into a0
+	ldi		xl, low(@1)
+	ldi		xh, high(@1)
+	rcall	eeprom_store
+	pop		a0
 	sei
+.endmacro
+
+.macro LOAD_CODE_EEPROM
+	; @1 = address in flash to store value
+	; @0 = address in EEPROM to read
+	push xl
+	push xh
+
+	CLR4 w, a0, xl, xh
+	ldi xl, low(@0)
+	ldi xh, high(@0)
+	rcall eeprom_load
+	sts @1, a0
+
+	pop xh
+	pop xl
 .endmacro
 
 ; === definitions ===
 .equ  KPDD = DDRE
 .equ  KPDO = PORTE
 .equ  KPDI = PINE
-.equ  KPD_DELAY = 30				; msec, debouncing keys of keypad
+.equ  KPD_DELAY = 30			; msec, debouncing keys of keypad
+/*
+.equ temp_MSB_eeprom = 0xff0a	; EEPROM temperature MSB address
+.equ temp_LSB_eeprom = 0xff0b	; EEPROM temperature LSB address
+.equ code1_eeprom = 0xff0c		;first EEPROM address for passcode
+.equ code2_eeprom = 0xff0d		;second EEPROM address for passcode
+.equ code3_eeprom = 0xff0e		;third EEPROM address for passcode
+.equ code4_eeprom = 0xff0f		;fourth EEPROM address for passcode
 
-.equ code1_eeprom = 123			;first EEPROM address for passcode
-.equ code2_eeprom = 124			;second EEPROM address for passcode
-.equ code3_eeprom = 125			;third EEPROM address for passcode
-.equ code4_eeprom = 126			;fourth EEPROM address for passcode
+.equ exp_MSB = 0xee
+.equ exp_LSB = 0xef
 
-.def	wr0 = r2					; detected row in hex
-.def	wr1 = r1					; detected column in hex
-.def	mask = r14					; row mask indicating which row has been detected in bin
-.def	wr2 = r15					; semaphore: must enter LCD display routine, unary: 0 or other
-.def	interm = r16				; intermediate register used in calculations
-.def	state = r6					; store state of system, three states total
-.def	temp0 = r8					; temperature0 (LSB)
-.def	temp1 = r9					; temperature1 (MSB)
-.def	chg = r26					; reload temperature
-.def	count = r27					; to know at which character of code to change
+.equ temp_MSB = 0xfa			; temperature MSB flash address
+.equ temp_LSB = 0xfb			; temperature LSB flash address
+.equ code1_address = 0xfc		;first flash address for passcode
+.equ code2_address = 0xfd		;second flash address for passcode
+.equ code3_address = 0xfe		;third flash address for passcode
+.equ code4_address = 0xff		;fourth flash address for passcode
+*/
+
+.def	wr0 = r2				; detected row in hex
+.def	wr1 = r1				; detected column in hex
+.def	mask = r14				; row mask indicating which row has been detected in bin
+.def	wr2 = r15				; semaphore: must enter LCD display routine, unary: 0 or other
+.def	interm = r16			; intermediate register used in calculations
+.def	state = r6				; store state of system, three states total
+.def	temp0 = r8				; temperature0 (LSB)
+.def	temp1 = r9				; temperature1 (MSB)
+.def	chg = r26				; reload temperature
+.def	count = r27				; to know at which character of code to change
 
 .dseg
 .org 0x0100
@@ -190,15 +209,15 @@ not_state_0:
 	jmp reset
 
 .org 10
-	jmp isr_ext_int0				; external interrupt INT4
-	jmp isr_ext_int1				; external interrupt INT5
-	jmp isr_ext_int2				; external interrupt INT6
-	jmp isr_ext_int3				; external interrupt INT7
+	jmp isr_ext_int0			; external interrupt INT4
+	jmp isr_ext_int1			; external interrupt INT5
+	jmp isr_ext_int2			; external interrupt INT6
+	jmp isr_ext_int3			; external interrupt INT7
 
-.org OVF0addr						; external interrupt for temperature sensor
+.org OVF0addr					; external interrupt for temperature sensor
 	rjmp read_temp
 
-.org OVF2addr						; timer overflow 2 interrupt vector
+.org OVF2addr					; timer overflow 2 interrupt vector
 	rjmp overflow2
 
 ; === interrupt service routines ===
@@ -251,7 +270,7 @@ read_temp: ; temperature sensor interrupt routine
 	_CPI	state,0x00					; check if in first state
 	breq	PC+2
 	reti
-	push	a0							; a0 might change, save on stack in case
+	push	a0							; a might change, save on stack in case
 	push	a1
 
 	rcall	wire1_reset					; send a reset pulse
@@ -261,28 +280,25 @@ read_temp: ; temperature sensor interrupt routine
 
 	rcall	lcd_home					; place cursor to home position
 	rcall	wire1_reset					; send a reset pulse
-	CA		wire1_write, skipROM	
+	CA		wire1_write, skipROM		; skip ROM identification
 	CA		wire1_write, readScratchpad	; send address to read value from sensor
 	rcall	wire1_read					; read temperature LSB
 	mov		c0, a0
-	mov		temp0,a0
 	rcall	wire1_read					; read temperature MSB
 	mov		temp1,a0					; save temperature MSB
-	mov		temp0,c0
+	mov		temp0,c0					; save temperature LSB
 	ldi		chg,0xff					; indicate temperature has changed
 	
-	; now we compare with the temperature seuil
+	; now we compare with the temperature_seuil set by user
 	ldi		xl, low(temp_seuil)
 	ldi		xh, high(temp_seuil)
 	ld		a0, x+
 	ld		a1, x
 	CP2		temp1,temp0,a1,a0
-
 	pop		a1							; restore a1
 	pop		a0							; restore a0
 	brlo	PC+2
-	_LDI	state, 0x02
-
+	_LDI	state, 0x02	
 	reti
 
 overflow2 :
@@ -301,12 +317,6 @@ overflow2 :
 .org 0x500
 reset:  
 	LDSP	RAMEND				; Load Stack Pointer (SP)
-	EEPROM_CHANGE_CODE 0x34, code1_eeprom
-	EEPROM_CHANGE_CODE 0x34, code2_eeprom
-	EEPROM_CHANGE_CODE 0x35, code3_eeprom
-	EEPROM_CHANGE_CODE 0x35, code4_eeprom
-
-reboot:
 	;=== save state of MCU control register ===
 	in		_w, MCUCR
 	sts		0xDDDD, _w
@@ -335,71 +345,80 @@ reboot:
 	OUTI	ASSR, (1<<AS0)		; clock from TOSC1 (external)
 	OUTI	TCCR0,6				; CS0=1 CK
 	OUTI	TCCR2,2				; prescaler for the buzzer
-	
 	;=== clear registers ===
 	CLR8 count, wr0, wr1, wr2, chg, b1, b2, b3
-
 	;=== set temperature limit ===
-	_LDI a0,0xe0				; corresponds to 30 degree celcius
-	_LDI a1,0x01
-	ldi xl,low(temp_seuil)
-	ldi xh,high(temp_seuil)
-	st x,a0
-	inc xl
-	st x,a1
+	_LDI	a0,0xe0				; corresponds to 30 degree celcius
+	_LDI	a1,0x01
+
+;	LOAD_CODE_EEPROM temp_MSB_eeprom, temp_MSB
+;	LOAD_CODE_EEPROM temp_LSB_eeprom, temp_LSB	
+;	LOAD_CODE_EEPROM code1_eeprom, code1_address
+;	LOAD_CODE_EEPROM code2_eeprom, code2_address
+;	LOAD_CODE_EEPROM code3_eeprom, code3_address
+;	LOAD_CODE_EEPROM code4_eeprom, code4_address
+
+;	lds b1, temp_MSB
+;	lds b0, temp_LSB
+	ldi		xl,low(temp_seuil)
+	ldi		xh,high(temp_seuil)
+	st		x,a0
+	inc		xl
+	st		x,a1
 
 	;=== set initial code ===
-;	_LDI    a0, 0x31			
-;	_LDI    a1, 0x32
-;	_LDI    a2, 0x33
-;	_LDI    a3, 0x34
+	_LDI    a0, 0x31			
+	_LDI    a1, 0x32
+	_LDI    a2, 0x33
+	_LDI    a3, 0x34
+/*	lds b0, code1_address
+	lds b1, code2_address
+	lds b2, code3_address
+	lds b3, code4_address
 
-	clr a0
-	ldi xl, low(code1_eeprom)
-	ldi xh, high(code1_eeprom)
-	rcall eeprom_load
-	mov b0, a0
+	cpi b0,0x31
+	brlo set_default
+	cpi b0, 0x44
+	brsh set_default
 
-	clr a0
-	ldi xl, low(code2_eeprom)
-	ldi xh, high(code2_eeprom)
-	rcall eeprom_load
-	mov b1, a0
+	cpi b1,0x31
+	brlo set_default
+	cpi b1, 0x44
+	brsh set_default
 
-	clr a0
-	ldi xl, low(code3_eeprom)
-	ldi xh, high(code3_eeprom)
-	rcall eeprom_load
-	mov b2, a0
+	cpi b1,0x31
+	brlo set_default
+	cpi b1, 0x44
+	brsh set_default
 
-	clr a0
-	ldi xl, low(code4_eeprom)
-	ldi xh, high(code4_eeprom)
-	rcall eeprom_load
-	mov b3, a0
+	cpi b1,0x31
+	brlo set_default
+	cpi b1, 0x44
+	brsh set_default
 
+set_default:
+	ldi b0, 0x31
+	ldi b1, 0x32
+	ldi b2, 0x33
+	ldi b3, 0x34
+	nop ; Placeholder for default action
+
+
+	lds b0, temp_msb
+	lds b1, temp_lsb
 	PRINTF LCD
-	.db LF, "Code in:    ",FSTR, b,0
-	
+.db LF, "Code in:    ",FSTR, b,0	
 	WAIT_MS 10000
 
-	clr a0
-	clr xl
-	clr xh
-
+;	CLR3 a0,xl,xh
+*/
 	ldi     xl,low(code)
 	ldi     xh,high(code)
-	st      x+,b0
-	st      x+,b1
-	st      x+,b2
-	st      x,b3
-	
-	clr a0
-	clr a1
-	clr b0
-	clr b1
-	clr b2
-	clr b3
+	st      x+,a0
+	st      x+,a1
+	st      x+,a2
+	st      x,a3
+
 	;=== set initial values ===
 	rcall LCD_clear
 	PRINTF LCD					; display initial LCD message
@@ -410,6 +429,10 @@ reboot:
 	_LDI    a2, 0x23
 	_LDI    a3, 0x23
 	_LDI	state, 0x00			; set initial state to 0
+
+	;=== clear registers ===
+	;CLR9 count, wr0, wr1, wr2, chg, b0, b1, b2, b3
+
 	sei							; enable interrupt
 	
 ;=======================
@@ -444,25 +467,25 @@ main:
 
 ;==== State 0 - Home Page ====
 state_0:
- 	tst		chg			; check flag/semaphore
-	breq	main		; if no change, back to main
+ 	tst		chg				; check flag/semaphore
+	breq	main			; if no change, back to main
 	clr		chg
-	mov		a0, temp0	; update temperature values
+	mov		a0, temp0		; update temperature values
 	mov		a1,	temp1
 
-	PRINTF	LCD
+	PRINTF	LCD				; update LCD display
 .db	LF,"Curr Temp=",FFRAC2+FSIGN,a,4,$22,"C ",0
 	rjmp	main
 
 ;==== State 1 - Enter code ====
 state_1:
 	rcall	LCD_clear		; clear LCD
-	clr		count
-	PRINTF	LCD
+	clr		count			; reset count 
+	PRINTF	LCD				; update LCD display
 .db FF,CR, "ENTER: ",0
 
-	_LDI	a0, 0x23		; reset a values to # for display
-	_LDI	a1, 0x23		; purposes
+	_LDI	a0, 0x23		; reset a values to # for
+	_LDI	a1, 0x23		; display purposes
 	_LDI	a2, 0x23
 	_LDI	a3, 0x23
 
@@ -482,6 +505,7 @@ display_code:
 
 	DECODE_ASCII	wr0, wr1, interm
 	CHECK_AND_SET	a0, a1, a2, a3, interm, count
+
 	PRINTF			LCD
 .db LF, "Code in:    ",FSTR, a,0
 	
@@ -523,7 +547,7 @@ loop:
 	rjmp	loop
 
 end:
-	jmp		reboot
+	jmp		reset
 
 ;==== Code verification ====
 verify_code:
@@ -531,7 +555,7 @@ verify_code:
 	PRINTF	LCD
 .db CR, CR, "verification...",0
 	WAIT_MS	1000
-
+	; save values
 	push	c0
 	push	c1
 	push	c2
@@ -555,44 +579,42 @@ verify_code:
 	cp		a3,c3
 	breq	PC+2
 	rjmp	wrong_code
-	
 	nop
-
-	pop c3
-	pop c2
-	pop c1
-	pop c0
+	; restore values
+	pop		c3
+	pop		c2
+	pop		c1
+	pop		c0
 
 correct_code:
 	nop
-	PRINTF LCD
-	.db CR, LF, "Correct Code"
-	.db  0
-	_CPI state,0x02
-	brne PC+2
-	rjmp stop_alarm
-
-	rjmp menu
-
+	PRINTF	LCD
+.db CR, LF, "Correct Code"
+.db  0
+	_CPI	state,0x02
+	brne	PC+2
+	rjmp	stop_alarm
+	rjmp	menu
 
 wrong_code:
-	pop c3
-	pop c2
-	pop c1
-	pop c0
-	PRINTF LCD
-	.db LF, "Wrong code PD",0
+	pop		c3
+	pop		c2
+	pop		c1
+	pop		c0
+	PRINTF	LCD
+.db LF, "Wrong code PD",0
 	WAIT_MS 1000
-	_CPI state,0x02
-	brne PC+2
-	rjmp state_1
-	_LDI state,0x00
-	rcall  LCD_clear
-	PRINTF LCD
-	.db	FF,CR,"Sprinkler Sys",0
-	rjmp main
+	_CPI	state,0x02
+	brne	PC+2
+	rjmp	state_1
+	_LDI	state,0x00
+	rcall	LCD_clear
+	PRINTF	LCD
+.db	FF,CR,"Sprinkler Sys",0
+	rjmp	main
 
 ;==== Store and Load from EEPROM ====
+
 
 ;==== Menu System ====
 menu:
@@ -676,9 +698,9 @@ change_code_1:
 	tst    wr2        ; check flag/semaphore
 	breq   change_code_1
 	clr    wr2
-	VERIFY_ENTER wr0,wr1,interm  ;check if BCD*# dont count,if A,verify code,otherwise ok
-							;interm=0 ok, interm=1 set code, interm=2 dont count
-	cpi interm,0x01	
+
+	VERIFY_ENTER wr0,wr1,interm		; loads case of key pressed into interm
+	cpi interm,0x01					; performs branching to redirect to correct case
 	brne PC+2
 	jmp set_new_code
 	cpi interm,0x02
