@@ -9,18 +9,18 @@ enc_old:.byte	1
 .cseg
 
 ; === macro ===
-.macro add_volker2
-	add @0,a2
-	brcc end2
-	inc @1
+.macro add_volker2			;if button down, macro to increment the		
+	add @0,a2				;fourth bit of the first byte while 
+	brcc end2				;checking and avoid errors du to 
+	inc @1					;overflow/carry
 	ldi a3,0x01
 end2 :
 	nop
 .endmacro
 
-.macro add_volker
-	inc @0
-	cpi @0,0x00
+.macro add_volker			;if button up, macro to incrment on 
+	inc @0					;two bytes while checking and avoid  
+	cpi @0,0x00				;errors due to overflow/carry
 	brne end1
 	inc @1
 	ldi a3,0x01
@@ -28,10 +28,10 @@ end1 :
 	nop
 .endmacro
 
-.macro sub_volker2
-	push @0
-	push a2
-	ldi a2,0xf0
+.macro sub_volker2			;if button down, macro to decrement the
+	push @0					;fourth bit of the first byte while
+	push a2					;checking and avoid errors du to
+	ldi a2,0xf0				;overflow/carry
 	and @0,a2
 	pop a2
 	cpi @0,0x00
@@ -47,9 +47,9 @@ end3 :
 .endmacro
 
 
-.macro sub_volker
-	cpi @0,0x00
-	breq mala
+.macro sub_volker			;if button up, macro to decrement on 
+	cpi @0,0x00				;two bytes while checking and avoid
+	breq mala				;errors due to overflow/carry
 	subi @0,1
 	jmp end
 mala:
