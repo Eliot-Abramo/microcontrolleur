@@ -1,24 +1,27 @@
 <ASSEMBLER_INFO>
  <VERSION>2.2.6</VERSION>
  <DEVICE>"ATmega128"</DEVICE>
- <WORKING_DIR>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\Debug</WORKING_DIR>
+ <WORKING_DIR>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\Debug</WORKING_DIR>
  <INCLUDE_PATH>
   <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc</DIR>
   <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc</FILE>
-  <FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\macros.asm</FILE>
-  <FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\definitions.asm</FILE>
-  <FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE>
-  <FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE>
-  <FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\eeprom.asm</FILE>
-  <FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE>
+  <FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\macros.asm</FILE>
+  <FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\definitions.asm</FILE>
+  <FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE>
+  <FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE>
+  <FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\eeprom.asm</FILE>
+  <FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE>
+  <FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE>
+  <FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE>
+  <FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\taylor_2byte.asm</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\Debug\projet.obj</FILE>
+  <FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\Debug\projet.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>projet.hex</FILE>
@@ -28,97 +31,153 @@
   <FILE>projet.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <reset><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>268</LINE></reset>
-  <isr_ext_int0><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>140</LINE></isr_ext_int0>
-  <isr_ext_int1><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>148</LINE></isr_ext_int1>
-  <isr_ext_int2><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>156</LINE></isr_ext_int2>
-  <isr_ext_int3><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>164</LINE></isr_ext_int3>
-  <read_temp><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>237</LINE></read_temp>
-  <retour><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>136</LINE></retour>
-  <column_detect><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>172</LINE></column_detect>
-  <col7><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>175</LINE></col7>
-  <col6><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>187</LINE></col6>
-  <isr_return><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>227</LINE></isr_return>
-  <col5><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>199</LINE></col5>
-  <col4><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>211</LINE></col4>
-  <err_row0><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>223</LINE></err_row0>
-  <beep01><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>231</LINE></beep01>
-  <wire1_reset><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE><LINE>54</LINE></wire1_reset>
-  <wire1_write><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE><LINE>59</LINE></wire1_write>
-  <lcd_home><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>37</LINE></lcd_home>
-  <wire1_read><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE><LINE>73</LINE></wire1_read>
-  <LCD_wr_ir><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>10</LINE></LCD_wr_ir>
-  <lcd_4us><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>18</LINE></lcd_4us>
-  <lcd_2us><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>20</LINE></lcd_2us>
-  <LCD><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>24</LINE></LCD>
-  <LCD_putc><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>25</LINE></LCD_putc>
-  <LCD_cr><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>63</LINE></LCD_cr>
-  <LCD_lf><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>73</LINE></LCD_lf>
-  <LCD_wr_dr><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>28</LINE></LCD_wr_dr>
-  <LCD_clear><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>36</LINE></LCD_clear>
-  <LCD_cursor_left><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>38</LINE></LCD_cursor_left>
-  <LCD_cursor_right><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>39</LINE></LCD_cursor_right>
-  <LCD_display_left><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>40</LINE></LCD_display_left>
-  <LCD_display_right><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>41</LINE></LCD_display_right>
-  <LCD_blink_on><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>42</LINE></LCD_blink_on>
-  <LCD_blink_off><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>43</LINE></LCD_blink_off>
-  <LCD_cursor_on><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>44</LINE></LCD_cursor_on>
-  <LCD_cursor_off><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>45</LINE></LCD_cursor_off>
-  <LCD_init><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>47</LINE></LCD_init>
-  <LCD_pos><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\lcd.asm</FILE><LINE>57</LINE></LCD_pos>
-  <_printf><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>138</LINE></_printf>
-  <_printf_read><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>143</LINE></_printf_read>
-  <_printf_end><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>153</LINE></_printf_end>
-  <_printf_formatted><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>159</LINE></_printf_formatted>
-  <_putw><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>195</LINE></_putw>
-  <rio_space><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>177</LINE></rio_space>
-  <dataram_space><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>174</LINE></dataram_space>
-  <space_detect_end><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>179</LINE></space_detect_end>
-  <_putchar><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>204</LINE></_putchar>
-  <_putstr><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>212</LINE></_putstr>
-  <_putnum><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>224</LINE></_putnum>
-  <_putdec><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>240</LINE></_putdec>
-  <_putbin><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>256</LINE></_putbin>
-  <_puthex><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>262</LINE></_puthex>
-  <_putfrac><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>279</LINE></_putfrac>
-  <_getnum><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>295</LINE></_getnum>
-  <_getdig><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>267</LINE></_getdig>
-  <_printf_4b><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>319</LINE></_printf_4b>
-  <_printf_3b><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>314</LINE></_printf_3b>
-  <_printf_2b><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>309</LINE></_printf_2b>
-  <_printf_1b><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>304</LINE></_printf_1b>
-  <_ftoa><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>338</LINE></_ftoa>
-  <_ftoa_plus><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>352</LINE></_ftoa_plus>
-  <_ftoa_int><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>359</LINE></_ftoa_int>
-  <_ftoa_shift><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>355</LINE></_ftoa_shift>
-  <_ftoa_int1><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>366</LINE></_ftoa_int1>
-  <_div41><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>450</LINE></_div41>
-  <_hex2asc><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>416</LINE></_hex2asc>
-  <_ftoa_space><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>377</LINE></_ftoa_space>
-  <_ftoa_sign><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>385</LINE></_ftoa_sign>
-  <_ftoa_int3><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>389</LINE></_ftoa_int3>
-  <_ftoa_end><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>409</LINE></_ftoa_end>
-  <_ftoa_point><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>400</LINE></_ftoa_point>
-  <_ftoa_frac><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>403</LINE></_ftoa_frac>
-  <_mul41><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>434</LINE></_mul41>
-  <__m41><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>436</LINE></__m41>
-  <__d41><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\printf.asm</FILE><LINE>452</LINE></__d41>
-  <eeprom_store><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\eeprom.asm</FILE><LINE>4</LINE></eeprom_store>
-  <eeprom_cli><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\eeprom.asm</FILE><LINE>17</LINE></eeprom_cli>
-  <eeprom_load><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\eeprom.asm</FILE><LINE>24</LINE></eeprom_load>
-  <wire1_wait><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE><LINE>39</LINE></wire1_wait>
-  <wire1_init><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE><LINE>49</LINE></wire1_init>
-  <wire1_write0><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE><LINE>55</LINE></wire1_write0>
-  <wire1_write1><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE><LINE>56</LINE></wire1_write1>
-  <wire1_read1><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE><LINE>57</LINE></wire1_read1>
-  <wire1_crc><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE><LINE>83</LINE></wire1_crc>
-  <crc1><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\wire1.asm</FILE><LINE>86</LINE></crc1>
-  <main><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>301</LINE></main>
-  <display_temp><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>312</LINE></display_temp>
-  <temp><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>322</LINE></temp>
-  <display_code><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>331</LINE></display_code>
-  <verify_code><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>348</LINE></verify_code>
-  <KeySet01><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>376</LINE></KeySet01>
-  <menu_system><FILE>C:\Users\mathi\OneDrive\Bureau\microcontroleur\microcontrolleur\projet\PROJJ.asm</FILE><LINE>365</LINE></menu_system>
+  <temp_seuil><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>240</LINE></temp_seuil>
+  <code><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>241</LINE></code>
+  <exp_result><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>242</LINE></exp_result>
+  <reset><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>358</LINE></reset>
+  <isr_ext_int0><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>264</LINE></isr_ext_int0>
+  <isr_ext_int1><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>268</LINE></isr_ext_int1>
+  <isr_ext_int2><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>272</LINE></isr_ext_int2>
+  <isr_ext_int3><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>276</LINE></isr_ext_int3>
+  <read_temp><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>307</LINE></read_temp>
+  <overflow2><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>345</LINE></overflow2>
+  <column_detect><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>280</LINE></column_detect>
+  <col7><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>283</LINE></col7>
+  <col6><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>287</LINE></col6>
+  <isr_return><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>299</LINE></isr_return>
+  <col5><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>291</LINE></col5>
+  <col4><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>295</LINE></col4>
+  <beep01><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>302</LINE></beep01>
+  <wire1_reset><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE><LINE>54</LINE></wire1_reset>
+  <wire1_write><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE><LINE>59</LINE></wire1_write>
+  <lcd_home><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>37</LINE></lcd_home>
+  <wire1_read><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE><LINE>73</LINE></wire1_read>
+  <LCD_wr_ir><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>10</LINE></LCD_wr_ir>
+  <lcd_4us><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>18</LINE></lcd_4us>
+  <lcd_2us><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>20</LINE></lcd_2us>
+  <LCD><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>24</LINE></LCD>
+  <LCD_putc><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>25</LINE></LCD_putc>
+  <LCD_cr><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>63</LINE></LCD_cr>
+  <LCD_lf><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>73</LINE></LCD_lf>
+  <LCD_wr_dr><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>28</LINE></LCD_wr_dr>
+  <LCD_clear><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>36</LINE></LCD_clear>
+  <LCD_cursor_left><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>38</LINE></LCD_cursor_left>
+  <LCD_cursor_right><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>39</LINE></LCD_cursor_right>
+  <LCD_display_left><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>40</LINE></LCD_display_left>
+  <LCD_display_right><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>41</LINE></LCD_display_right>
+  <LCD_blink_on><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>42</LINE></LCD_blink_on>
+  <LCD_blink_off><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>43</LINE></LCD_blink_off>
+  <LCD_cursor_on><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>44</LINE></LCD_cursor_on>
+  <LCD_cursor_off><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>45</LINE></LCD_cursor_off>
+  <LCD_init><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>47</LINE></LCD_init>
+  <LCD_pos><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\lcd.asm</FILE><LINE>57</LINE></LCD_pos>
+  <_printf><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>138</LINE></_printf>
+  <_printf_read><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>143</LINE></_printf_read>
+  <_printf_end><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>153</LINE></_printf_end>
+  <_printf_formatted><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>159</LINE></_printf_formatted>
+  <_putw><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>195</LINE></_putw>
+  <rio_space><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>177</LINE></rio_space>
+  <dataram_space><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>174</LINE></dataram_space>
+  <space_detect_end><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>179</LINE></space_detect_end>
+  <_putchar><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>204</LINE></_putchar>
+  <_putstr><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>212</LINE></_putstr>
+  <_putnum><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>224</LINE></_putnum>
+  <_putdec><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>240</LINE></_putdec>
+  <_putbin><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>256</LINE></_putbin>
+  <_puthex><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>262</LINE></_puthex>
+  <_putfrac><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>279</LINE></_putfrac>
+  <_getnum><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>295</LINE></_getnum>
+  <_getdig><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>267</LINE></_getdig>
+  <_printf_4b><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>319</LINE></_printf_4b>
+  <_printf_3b><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>314</LINE></_printf_3b>
+  <_printf_2b><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>309</LINE></_printf_2b>
+  <_printf_1b><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>304</LINE></_printf_1b>
+  <_ftoa><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>338</LINE></_ftoa>
+  <_ftoa_plus><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>352</LINE></_ftoa_plus>
+  <_ftoa_int><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>359</LINE></_ftoa_int>
+  <_ftoa_shift><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>355</LINE></_ftoa_shift>
+  <_ftoa_int1><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>366</LINE></_ftoa_int1>
+  <_div41><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>450</LINE></_div41>
+  <_hex2asc><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>416</LINE></_hex2asc>
+  <_ftoa_space><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>377</LINE></_ftoa_space>
+  <_ftoa_sign><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>385</LINE></_ftoa_sign>
+  <_ftoa_int3><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>389</LINE></_ftoa_int3>
+  <_ftoa_end><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>409</LINE></_ftoa_end>
+  <_ftoa_point><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>400</LINE></_ftoa_point>
+  <_ftoa_frac><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>403</LINE></_ftoa_frac>
+  <_mul41><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>434</LINE></_mul41>
+  <__m41><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>436</LINE></__m41>
+  <__d41><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\printf.asm</FILE><LINE>452</LINE></__d41>
+  <eeprom_store><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\eeprom.asm</FILE><LINE>4</LINE></eeprom_store>
+  <eeprom_cli><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\eeprom.asm</FILE><LINE>17</LINE></eeprom_cli>
+  <eeprom_load><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\eeprom.asm</FILE><LINE>24</LINE></eeprom_load>
+  <wire1_wait><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE><LINE>39</LINE></wire1_wait>
+  <wire1_init><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE><LINE>49</LINE></wire1_init>
+  <wire1_write0><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE><LINE>55</LINE></wire1_write0>
+  <wire1_write1><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE><LINE>56</LINE></wire1_write1>
+  <wire1_read1><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE><LINE>57</LINE></wire1_read1>
+  <wire1_crc><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE><LINE>83</LINE></wire1_crc>
+  <crc1><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\wire1.asm</FILE><LINE>86</LINE></crc1>
+  <enc_old><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>17</LINE></enc_old>
+  <encoder_init><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>72</LINE></encoder_init>
+  <encoder><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>81</LINE></encoder>
+  <encoder_button><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>160</LINE></encoder_button>
+  <i_down><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>134</LINE></i_down>
+  <i_up><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>108</LINE></i_up>
+  <a_rise><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>121</LINE></a_rise>
+  <a_fall><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>111</LINE></a_fall>
+  <i_up_done><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>130</LINE></i_up_done>
+  <end><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>546</LINE></end>
+  <a_rise2><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>147</LINE></a_rise2>
+  <a_fall2><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>137</LINE></a_fall2>
+  <i_down_done><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>156</LINE></i_down_done>
+  <i_rise><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>166</LINE></i_rise>
+  <i_fall><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\encoder.asm</FILE><LINE>163</LINE></i_fall>
+  <main><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>431</LINE></main>
+  <state_0><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>464</LINE></state_0>
+  <state_1><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>475</LINE></state_1>
+  <alarm><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>508</LINE></alarm>
+  <display_code><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>486</LINE></display_code>
+  <verify_code><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>551</LINE></verify_code>
+  <KeySet01><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>771</LINE></KeySet01>
+  <stop_alarm><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>512</LINE></stop_alarm>
+  <servo_routine><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>520</LINE></servo_routine>
+  <calculate_math><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>764</LINE></calculate_math>
+  <loop><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>536</LINE></loop>
+  <wrong_code><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>599</LINE></wrong_code>
+  <correct_code><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>589</LINE></correct_code>
+  <menu><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>619</LINE></menu>
+  <menu1><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>622</LINE></menu1>
+  <change_code><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>686</LINE></change_code>
+  <change_temp><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>644</LINE></change_temp>
+  <change_temp1><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>653</LINE></change_temp1>
+  <set_new_temp><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>667</LINE></set_new_temp>
+  <change_code_1><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>704</LINE></change_code_1>
+  <set_new_code><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\355665_364154.asm</FILE><LINE>724</LINE></set_new_code>
+  <mul11><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>12</LINE></mul11>
+  <mul21><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>32</LINE></mul21>
+  <mul22><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>58</LINE></mul22>
+  <mul31><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>80</LINE></mul31>
+  <mul32><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>109</LINE></mul32>
+  <mul33><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>146</LINE></mul33>
+  <mul44><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>201</LINE></mul44>
+  <mul11s><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>213</LINE></mul11s>
+  <mul22s><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>220</LINE></mul22s>
+  <mul33s><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>229</LINE></mul33s>
+  <mul44s><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>238</LINE></mul44s>
+  <div11><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>255</LINE></div11>
+  <div21><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>269</LINE></div21>
+  <_d21><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>272</LINE></_d21>
+  <div22><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>292</LINE></div22>
+  <div31><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>314</LINE></div31>
+  <_d31><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>317</LINE></_d31>
+  <div32><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>326</LINE></div32>
+  <_d32><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\math.asm</FILE><LINE>329</LINE></_d32>
+  <start_math><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\taylor_2byte.asm</FILE><LINE>15</LINE></start_math>
+  <calculation_speed><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\taylor_2byte.asm</FILE><LINE>44</LINE></calculation_speed>
+  <exp_cal><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\taylor_2byte.asm</FILE><LINE>82</LINE></exp_cal>
+  <exp_loop><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\taylor_2byte.asm</FILE><LINE>91</LINE></exp_loop>
+  <pow_loop><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\taylor_2byte.asm</FILE><LINE>164</LINE></pow_loop>
+  <end_math><FILE>C:\Users\eliot\Documents\University Documents\BA4\microcontrolleur\projet\taylor_2byte.asm</FILE><LINE>130</LINE></end_math>
  </LABELS>
 </ASSEMBLER_INFO>

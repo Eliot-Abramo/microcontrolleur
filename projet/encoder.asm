@@ -1,5 +1,14 @@
-; file	encoder.asm   target ATmega128L-4MHz-STK300
-; purpose library angular encoder operation
+ /*
+    EPFL - EE-208: Microcontroleurs et Systemes Numeriques
+    Semester Project - Spring Semester 2024
+
+    Groupe 014:
+    Eliot Abramo - SCIPER 355665
+    Mathias Rainaldi - SCIPER 364154
+
+	Modified encoder.asm file in order to function on a 2 byte system
+	instead of 1 byte.
+*/
 
 ; === definitions ===
 .equ	ENCOD	= PORTD

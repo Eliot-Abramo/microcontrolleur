@@ -15,7 +15,7 @@
     <Name>projet</Name>
     <RootNamespace>projet</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
-    <EntryFile>$(MSBuildProjectDirectory)\PROJJ.asm</EntryFile>
+    <EntryFile>$(MSBuildProjectDirectory)\355665_364154.asm</EntryFile>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
@@ -77,16 +77,16 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AsmFile1.asm">
+    <Compile Include="355665_364154.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AsmFile2.asm">
+    <Compile Include="encoder.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AsmFile3.asm">
+    <Compile Include="math.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PROJJ.asm">
+    <Compile Include="taylor_2byte.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="definitions.asm">
@@ -101,13 +101,7 @@
     <Compile Include="macros.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mathias.asm">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="printf.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="projet_alex.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="wire1.asm">

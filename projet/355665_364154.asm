@@ -1,11 +1,9 @@
 /*
- * AsmFile4.asm
- *
  *  Created: 22/05/2024 23:41:19
  *   Author: eliot
  */ 
  /*
-    EPFL - EE-208: Microcontr?leurs et Syst?mes Num?riques
+    EPFL - EE-208: Microcontroleurs et Systemes Numeriques
     Semester Project - Spring Semester 2024
 
     Groupe 014:
@@ -38,20 +36,20 @@
 	jmp		fin
 
 verif:
-	ldi		@2,0x01
-	jmp		fin
+	ldi		@2,0x01					; update the interm to the wanted value
+	jmp		fin						; jump to end
 	
 not_letter:
-	_CPI	@0,0x03
-	brne	okay
+	_CPI	@0,0x03					; check if on column 3
+	brne	okay				
 
-	_CPI	@1,0x01
+	_CPI	@1,0x01					; check if column 1
 	breq	okay
-	ldi		@2,0x02
+	ldi		@2,0x02					; update the interm to the wanted value
 	jmp		fin
 
 okay:
-	ldi		@2,0x00
+	ldi		@2,0x00					; set default value
 
 fin:
 	nop
@@ -94,6 +92,7 @@ fin:
 .endmacro
 
 .macro DECODE_ASCII
+	; used to decode the input into an ASCII value
 	; @2 = interm = intermediate 'temporary' register used in calculations
 	; @1 = wr1 = r1 = column = high bit
 	; @0 = wr0 = r2 = row = low bit
@@ -112,6 +111,7 @@ fin:
 .endmacro
 
 .macro ROW_MACRO
+	; used to simplify the detection of the correct row of the keypad
 	; @4 = state = current state of system
 	; @3 = mask for the row
 	; @2 = wr0 = row counter
@@ -130,6 +130,7 @@ not_state_0:
 .endmacro
 
 .macro COLUMN_MACRO
+	; used to simplify the detection of the correct column of the keypad
 	; @2 = column number (0->3)
 	; @1 = next column subroutine address
 	; @0 = column identification
@@ -145,6 +146,7 @@ not_state_0:
  .endmacro
 
 .macro READ_EEPROM
+	; used to read the value at an EEPROM address and store it accordingly
 	; @1 = register to store value at address
 	; @0 = value address in EEPROM
 	push xl
@@ -163,6 +165,7 @@ not_state_0:
 .endmacro
 
 .macro WRITE_EEPROM
+	; used to write a value to an EEPROM address 
 	;@1 = address in EEPROM to store value at
 	;@0 = value to store in EEPROM
 	cli
@@ -181,6 +184,8 @@ not_state_0:
 .endmacro
 
 .macro INITIALZE_CODE
+	; used to read the code in the EEPROM and check if it is a possible code
+	; (i.e. the values between 0-9) and store it in the system.
 	; @1 = address in EEPROM
 	; @0 = value to save at address
 	push	b0
@@ -223,9 +228,6 @@ end:
 .def	chg = r26					; reload temperature
 .def	count = r27					; to know at which character of code to change
 
-.equ	exp_MSB = 0xee
-.equ	exp_LSB = 0xef
-.equ	temp_modified = 0xff09		; to see if user modified temp in EEPROM
 .equ	temp_MSB = 0xff0a			; temperature MSB address
 .equ	temp_LSB = 0xff0b			; temperature LSB address
 .equ	code1_address = 0xff0c		; first address for passcode
@@ -235,8 +237,9 @@ end:
 
 .dseg
 .org 0x0100
-	temp_seuil: .byte 2
-	code:		.byte 4
+	temp_seuil: .byte 2				; stores the threshold value for the temperature
+	code:		.byte 4				; stores the code of the system
+	exp_result:	.byte 2				; stores the result of the taylor series
 
 ; === interrupt vector table ===
 .cseg
@@ -350,12 +353,8 @@ overflow2 :
 .include "wire1.asm"	; include one-wire protocol routines
 .include "encoder.asm"	; include encoder routines
 
-;.org 0x1000
-;.include "math_2byte.asm"
-
 ; === initialization and configuration ===
-.org 0x500
-
+.org 0x400
 reset:  
 	LDSP	RAMEND				; Load Stack Pointer (SP)
 	;=== save state of MCU control register ===
@@ -369,6 +368,8 @@ reset:
 	rcall	encoder_init		; initialize encoder interface
 
 	;=== configure output pins ===
+	OUTI	DDRA, 0x01			; configure PORTA to output
+	OUTI	PORTA, 0x00			; ensure pin not yet activated
 	OUTI	DDRC,0xff			; configure portC to output
 	OUTI	DDRD,0xff			; configure portD to output
 	sbi		DDRD,SPEAKER		; set bit speaker is connected to 1
@@ -398,11 +399,13 @@ reset:
 	st		x,a1
 
 	;=== set initial code ===
+	; initializes all 4 bits of the code using macro
 	INITIALZE_CODE		a0, code1_address
 	INITIALZE_CODE		a1, code2_address
 	INITIALZE_CODE		a2, code3_address
 	INITIALZE_CODE		a3, code4_address
 
+	; add code loaded in to pointer x, to be used later in verification
 	ldi     xl,low(code)
 	ldi     xh,high(code)
 	st      x+,a0
@@ -440,22 +443,39 @@ main:
 	nop
 	rjmp	main
 
-; === sub-routines ===
+;=======================
+; ==== sub-routines ====
+;=======================
+/****** Ordered as followed ******
+	-> State 0 - Home Page
+	-> State 1 - Enter Code
+	-> State 2 - Alarm and Servo
+
+	-> Code Verifcation
+	-> Store and Load from EEPROM 
+	-> Menu System
+		-> Temperature sub-menu
+		-> Code sub-menu
+
+	-> Math calculations sub-routines
+/********************************/
+
+;==== State 0 - Home Page ====
 state_0:
  	tst		chg			; check flag/semaphore
 	breq	main		; if no change, back to main
 	clr		chg
 	mov		a0, temp0	; update temperature values
 	mov		a1,	temp1
-	
-	PRINTF	LCD
+	PRINTF	LCD			; print temperature
 .db	LF,"Curr Temp=",FFRAC2+FSIGN,a,4,$22,"C ",0
 	rjmp	main
 
+;==== State 1 - Enter code ====
 state_1:
 	rcall	LCD_clear		; clear LCD
 	clr		count
-	PRINTF	LCD
+	PRINTF	LCD				; update LCD display
 .db FF,CR, "ENTER: ",0
 
 	_LDI	a0, 0x23		; reset a values to # for display
@@ -470,84 +490,83 @@ display_code:
 
 	VERIFY_ENTER	wr0,wr1,interm  ; check if BCD*# dont count,if A,verify code,otherwise ok
 									; interm=0 ok, interm=1 verify code, interm=2 dont count
-	cpi		interm, 0x01	
+	cpi		interm, 0x01
 	brne	PC+2
 	jmp		verify_code
 
 	cpi		interm,0x02
 	breq	display_code
 
-	DECODE_ASCII	wr0, wr1, interm
-	CHECK_AND_SET	a0, a1, a2, a3, interm, count
-
-	PRINTF LCD
+	DECODE_ASCII	wr0, wr1, interm				; decode the input from keypad into the ascii value
+	CHECK_AND_SET	a0, a1, a2, a3, interm, count	; Update value accordingly (change incremental 
+													; bit of the code)
+	PRINTF LCD										; update LCD
 .db LF, "Code in:    ",FSTR, a,0
-	
 	rjmp	display_code 
 
+;==== State 2 - Alarm and Servo system ====
 alarm : 
-	OUTI	TIMSK,(1<<TOIE2)
+	OUTI	TIMSK,(1<<TOIE2)			; enable the timer
 	rjmp	state_1
 
-stop_alarm :
+stop_alarm :							; sub-routine to turn off alarm	
 	WAIT_MS 1000
-	rcall LCD_clear
-	PRINTF LCD
+	rcall LCD_clear						; clear display
+	PRINTF LCD							; update display
 	.db	FF,CR,"Sprinkler Sys",0
-	OUTI  TIMSK,(1<<TOIE0)
-	_LDI state,0x00
+	OUTI  TIMSK,(1<<TOIE0)				; Disable the timer
+	_LDI state,0x00						; update the state of the system
 
 servo_routine:
-	cli
-	ldi _w, 0xf0
-	add _w, a0
+	cli									; disable interrupts to ensure execution of sub-routine
+	ldi _w, 0xf0						; add initial offset to duration of movement of servo
+	call calculate_math					; call the sub-routine to calculate the coefficient of Arrhenius 
+	add _w, a0							; add result of exponential to offset
 	add _w, a1
-	rcall LCD_clear
-	PRINTF LCD
+	rcall LCD_clear						; clear LCD
+	PRINTF LCD							; update LCD
 	.db	FF,CR,"Servo activated",0
-	OUTI DDRA, 0x01
+
+	OUTI DDRA, 0x01						; Activate the pump by activating correct pin
 	OUTI PORTA, 0x01
-	push interm
-	clr interm
-	lds interm, 0xDDDD
-	out MCUCR, interm
-	pop interm
+
+	lds interm, 0xDDDD					; reset the MCUCR to initial state to ensure
+	out MCUCR, interm					; correct working of servo motor
 
 loop:
-	tst _w
+	tst _w								; test to see if end of loop
 	breq end
-	dec _w
-	P0 PORTC,SERVO1 ; pin=4
+	dec _w								
+	P0 PORTC,SERVO1						; send PWM impulse in order to move the servo
 	WAIT_US 1900000
- 
-	P1 PORTC,SERVO1  ; pin=400
+	P1 PORTC,SERVO1  
 	WAIT_US 100000
 	rjmp loop
 
 end:
-	sei
-	jmp reset
+	sei									; reactivate the interrupts
+	jmp reset							; reset the system to initial state
 
 ;==== Code verification ====
 verify_code:
-	rcall		LCD_clear
-	PRINTF		LCD
+	rcall		LCD_clear				; clear LCD
+	PRINTF		LCD						; Update LCD
 .db CR, CR, "verification...",0
-	WAIT_MS		1000
+	WAIT_MS		1000					; Add wait to ensure message can be seen by user
 
-	push	c0
-	push	c1
+	push	c0							; Push registers on SRAM in order to be able to 
+	push	c1							; recover them after
 	push	c2
 	push	c3
 
-	ldi		xl,low(code)
+	ldi		xl,low(code)				; load code from SRAM address into x pointer
 	ldi		xh,high(code)
 	ld		c0,x+
 	ld		c1,x+
 	ld		c2,x+
 	ld		c3,x
 
-	cp		a0,c0
+	cp		a0,c0						; check if each bit of the code is correct
 	breq	PC+2
 	rjmp	wrong_code
 	cp		a1,c1
@@ -567,186 +586,191 @@ verify_code:
 	pop c1
 	pop c0
 
-correct_code:
+correct_code:				
 	nop
-	PRINTF	LCD
+	PRINTF	LCD							; update LCD display
 .db CR, LF, "Correct Code"
 .db  0
-	_CPI	state,0x02
+	_CPI	state,0x02					; check if in alarm state
 	brne	PC+2
 	rjmp	stop_alarm
-	rjmp menu
+	rjmp menu							; loop back to menu
 
 wrong_code:
-	pop		c3
+	pop		c3							; restore initial values of registers
 	pop		c2
 	pop		c1
 	pop		c0
 
-	PRINTF	LCD
-.db LF, "Wrong code PD",0
+	PRINTF	LCD							; update LCD
+.db LF, "Wrong code ",0
 	WAIT_MS 1000
 
-	_CPI	state,0x02
+	_CPI	state,0x02					; check if in Alarm mode
 	brne	PC+2
 	rjmp	state_1
-	_LDI	state,0x00
+	_LDI	state,0x00					; check if in normal mode
 	rcall	LCD_clear
-	PRINTF	LCD
+	PRINTF	LCD							; update LCD
 .db	FF,CR,"Sprinkler Sys",0
 	rjmp	main
 
+;==== Menu System ====
 menu:
-	WAIT_MS	1000
-	rcall  LCD_clear
+	WAIT_MS	1000						; add wait offset in order to ensure correct functioning of system
+	rcall  LCD_clear					; clear LCD display
 menu1:
-	WAIT_MS 100
+	WAIT_MS 100							; add wait to ensure correct functioning
 
-	PRINTF	LCD
+	PRINTF	LCD							; Update LCD display
 .db	FF,CR,"A=CHANGE CODE",0
 	nop
-	PRINTF	LCD
+	PRINTF	LCD							; Update LCD display
 .db	LF,"B=CHANGE TEMP   ",0
 
-	tst		wr2        ; check flag/semaphore
+	tst		wr2							; check flag/semaphore
 	breq	menu1
 	clr		wr2
 
-	DECODE_ASCII	wr0, wr1, interm
-	cpi		interm,0x41
+	DECODE_ASCII	wr0, wr1, interm	; Decode input into ASCII value
+	cpi		interm,0x41					; branching operations based on the result of interm
 	brne	PC+2
-	rjmp	change_code
+	rjmp	change_code					; change code option
 	cpi		interm,0x42
-	breq	change_temp
+	breq	change_temp					; change temp option
 	rjmp	menu1
 
-/**** Temperature sub-menu ****/
+;==== Temperature sub-menu ====
 change_temp:
-	ldi		xl,low(temp_seuil)
+	ldi		xl,low(temp_seuil)			; load the threshold temperature into pointer X
 	ldi		xh,high(temp_seuil)
-	ld		a0,x+
+	ld		a0,x+						; load values into a registers
 	ld		a1,x
-	rcall	LCD_clear
-	PRINTF	LCD
+	rcall	LCD_clear					; clear LCD display
+	PRINTF	LCD							; update LCD display
 .db	FF,CR,"Change temp:",0
 
-change_temp1:					
-	WAIT_MS	15
-	rcall	encoder				; poll encoder
-	PRINTF LCD
+change_temp1:							; change temp sub-routine part 2, needed for looping
+	WAIT_MS	10
+	rcall	encoder						; poll encoder
+	PRINTF LCD							; update LCD
 .db	LF,"Temp=",FFRAC2+FSIGN,a,4,$32,"C ",0
 
-	tst    wr2        ; check flag/semaphore
-	breq   change_temp1
-	clr    wr2
-	DECODE_ASCII wr0, wr1, interm
-	cpi		interm,0x41
-	breq	set_new_temp
-	rjmp	change_temp1
+	tst    wr2							; check flag/semaphore
+	breq   change_temp1					; loop back
+	clr    wr2				
+	DECODE_ASCII wr0, wr1, interm		; decoode input into ASCII
+	cpi		interm,0x41					; branching on state of interm
+	breq	set_new_temp				; save new temp
+	rjmp	change_temp1				; loop back
 
-set_new_temp :
-	ldi		xl,low(temp_seuil)
+set_new_temp :					
+	ldi		xl,low(temp_seuil)			; load threshold temp into x pointer
 	ldi		xh,high(temp_seuil)
 	st		x+,a0
 	st		x,a1
 
-	rcall  LCD_clear
-	PRINTF LCD
+	rcall  LCD_clear					; clear LCD
+	PRINTF LCD							; update LCD
 .db LF, "NEW TEMP SET",0
-	_LDI state,0x00
-
-	WAIT_MS 1000
-	rcall  LCD_clear
-	PRINTF LCD
+	_LDI state,0x00						; reset state of system to default
+	
+	WAIT_MS 1000						; wait to ensure system has time to react
+	rcall  LCD_clear					; clear LCD display
+	PRINTF LCD							; update LCD display
 .db	FF,CR,"Sprinkler Sys",0
 
-	rjmp main
+	rjmp main							; loop back to main
 
-/**** Change code sub-menu ****/
+;==== Change code sub-menu ====
 change_code :
-	rcall	LCD_clear
-	PRINTF	LCD
+	rcall	LCD_clear					; clear LCD display
+	PRINTF	LCD							; update LCD display
 .db	FF,CR,"WRITE NEW CODE:",0
 
-	ldi		xl,low(code)
+	ldi		xl,low(code)				; load existing code
 	ldi		xh,high(code)
 	ld		a0,x+
 	ld		a1,x+
 	ld		a2,x+
 	ld		a3,x
 
-	PRINTF	LCD 
+	PRINTF	LCD							; update LCD display
 .db LF, "NEW CODE:   ",FSTR, a,0
-	WAIT_MS 500
+	WAIT_MS 500							; wait to ensure system has time to react
 	
-	ldi		count,0x00
+	ldi		count,0x00					; reset count to 0
 
-change_code_1:
-	WAIT_MS	1
+change_code_1:							; second change code sub-routine, used for looping
+	WAIT_MS	1							; wait to ensure time has time to react
 
-	tst    wr2        ; check flag/semaphore
+	tst    wr2							; check flag/semaphore
 	breq   change_code_1
 	clr    wr2
-	VERIFY_ENTER wr0,wr1,interm  ; loads case of key pressed into interm
-	cpi		interm,0x01				 ; performs branching to redirect to correct case
+	VERIFY_ENTER wr0,wr1,interm			; loads case of key pressed into interm
+	cpi		interm,0x01					; performs branching to redirect to correct case
 	brne	PC+2
 	jmp		set_new_code
 	cpi		interm,0x02
 	brne	PC+2
 	rjmp	change_code_1
 	
-	DECODE_ASCII	wr0, wr1, interm
+	DECODE_ASCII	wr0, wr1, interm	; decode input to ASCII value
 	CHECK_AND_SET	a0, a1, a2, a3, interm, count
-	PRINTF	LCD 
+	PRINTF	LCD							; update LCD display
 .db LF, "NEW CODE:   ",FSTR, a,0
-	rjmp			change_code_1
+	rjmp			change_code_1		; loop back
 
 set_new_code:
-	ldi		xl,low(code)
+	ldi		xl,low(code)				; load existing code
 	ldi		xh,high(code)
 	st		x+,a0
 	st		x+,a1
 	st		x+,a2
 	st		x,a3
 
-	push	a0
-	push	a1
+	push	a0							; push registers to SRAM in order to restore their
+	push	a1							; initial values later
 	push	a2
 	push	a3
-
-	rcall	LCD_clear
-	PRINTF	LCD
+	
+	rcall	LCD_clear					; clear LCD display
+	PRINTF	LCD							; update LCD display
 .db LF, "NEW CODE SET",0
-	_LDI	state,0x00
+	_LDI	state,0x00					; reset state of system 
 
-	WAIT_MS 1000
-	rcall	LCD_clear
-	PRINTF	LCD
+	WAIT_MS 1000						; wait to ensure the user can see message
+	rcall	LCD_clear					; clear LCD display
+	PRINTF	LCD							; update LCD display
 .db	FF,CR,"Sprinkler Sys",0
 
-	pop a3
+	pop a3								; restore registers
 	pop a2
 	pop a1
 	pop a0
 
-	WRITE_EEPROM a0, code1_address
+	WRITE_EEPROM a0, code1_address		; write new code to EEPROM
 	WRITE_EEPROM a1, code2_address
 	WRITE_EEPROM a2, code3_address
 	WRITE_EEPROM a3, code4_address
 	
-	rjmp main
+	rjmp main							; loop back
 
-.include "math.asm"
-.include "math_2byte.asm"
+;==== Math calculations sub-routines ====
+; these libraries were imported here as otherwise they occupy too much SRAM and it can cause
+; conflicts with the rest of the program.
+.include "math.asm"						; include math libraries
+.include "taylor_2byte.asm"				; include Taylor series library
 calculate_math:
-	call	calculation_speed
-	lds		a0, exp_MSB
-	lds		a1, exp_LSB
-	jmp		servo_routine
+	call	calculation_speed			; call function to calculate  the coefficient of Arrhenius 
+	lds		a0, exp_result				; load results into register
+	lds		a1, exp_result
+	ret									; return to where function was cllaed
 
- ; === look up table ===
+; === look up table for ASCII values===
 KeySet01:
 	.db 0x31, 0x32, 0x33, 0x41 ; 1, 2, 3, A
 	.db 0x34, 0x35, 0x36, 0x42 ; 4, 5, 6, B
 	.db 0x37, 0x38, 0x39, 0x43 ; 7, 8, 9, C
 	.db 0x2A, 0x30, 0x23, 0x44 ; *, 0, #, D
+
